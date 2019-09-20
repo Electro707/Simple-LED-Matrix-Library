@@ -9,6 +9,7 @@ To get started, you will need both an Arduino (any kind should work), and a MAX7
 ## Wiring LED Matrix to Arduino
 
 To wire the LED Matrix to the Arduino, connect the following pins together.
+
 | LED Matrix Pins | Arduino Pins |
 | --- | --- |
 | VCC | VCC |
@@ -20,7 +21,7 @@ To wire the LED Matrix to the Arduino, connect the following pins together.
 ### Installing Library
 
 Install this library like you would with any Arduino library.
-Like to the official guide can be found at [GUIDE](https://www.arduino.cc/en/Guide/Libraries)
+Like to the official guide can be found [here!](https://www.arduino.cc/en/Guide/Libraries)
 Follow the "Importing a .zip Library" of the guide for this library.
 
 ## To-Do

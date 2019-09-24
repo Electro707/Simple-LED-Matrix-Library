@@ -1,5 +1,5 @@
-#ifndef MAKERSPACE7219_H
-#define MAKERSPACE7219_H
+#ifndef SIMPLEMATRIX_H
+#define SIMPLEMATRIX_H
 
 #include "Arduino.h"
 #include <SPI.h>
@@ -9,13 +9,13 @@
 #define number_of_module 4
 #endif
 
-class MS_MAX7219{
+class simpleMatrix{
   public:
-    MS_MAX7219(int pin);
+    simpleMatrix(int pin);
     void begin();
     void clearDisplay(int from=0, int to=(number_of_module-1));
     void fillDisplay(int from=0, int to=(number_of_module-1));
-    void scrollText(const char *text, int del);.
+    void scrollText(char *text, int del);
 	  void scrollTextPROGMEM(const char *text, int del);
     void sendMatrixBuffer(uint8_t *mat);
     void setIntensity(int intensity);

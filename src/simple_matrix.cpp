@@ -1,9 +1,9 @@
 #include "Arduino.h"
-#include "makerspace_sign.h"
+#include "simple_matrix.h"
 #include "font.h"
 
 /********************************************************************************
-	MS_MAX7219 Library
+	simpleMatrix Library
 	This library is designed to handle all the low and high level functions for
 	the MAX7219 LED Matrixes.
   Originally designed for the University of New Haven's 
@@ -16,7 +16,7 @@
   Low Level Function
 ********************************************************************************/
 //Sends a command to a single MS7219
-void MS_MAX7219::sendCommandtoOne(uint8_t command, uint8_t data, uint8_t display){
+void simpleMatrix::sendCommandtoOne(uint8_t command, uint8_t data, uint8_t display){
   uint8_t d[number_of_module*2]; //Array that containts data to be sent
   d[2*display] = command;
   d[(2*display)+1] = data;
@@ -26,7 +26,7 @@ void MS_MAX7219::sendCommandtoOne(uint8_t command, uint8_t data, uint8_t display
 }
 
 //Sends a command to all MAX7219s
-void MS_MAX7219::sendCommandtoAll(uint8_t command, uint8_t data){
+void simpleMatrix::sendCommandtoAll(uint8_t command, uint8_t data){
   digitalWrite(_DL_PIN,LOW);
   for(int i=0;i<number_of_module;i++){
     SPI.transfer(command);
@@ -37,7 +37,7 @@ void MS_MAX7219::sendCommandtoAll(uint8_t command, uint8_t data){
 
 //Updates all displays. The buffer that is displayed in the
 //	internal _matrix array
-void MS_MAX7219::senddisplay(){
+void simpleMatrix::senddisplay(){
   for(int r=0;r<8;r++){ //8 rows
     digitalWrite(_DL_PIN,LOW);
     for(int i=0;i<number_of_module;i++){
@@ -50,14 +50,14 @@ void MS_MAX7219::senddisplay(){
 
 //The library's constructor. Sets the internal _DL_PIN value to pin and
 //sends the pin as an OUTPUT and turns it HIGH
-MS_MAX7219::MS_MAX7219(int pin){
+simpleMatrix::simpleMatrix(int pin){
   _DL_PIN = pin;
   pinMode(_DL_PIN,OUTPUT);
   digitalWrite(_DL_PIN,HIGH);
 }
 
 //Initalizes the library. Starts the SPI periferal and sends nessesary commands
-void MS_MAX7219::begin(){
+void simpleMatrix::begin(){
 	SPI.begin();
   SPI.setBitOrder(MSBFIRST);
   sendCommandtoAll(0x0C,0x00); //Enter shutdown mode
@@ -73,7 +73,7 @@ void MS_MAX7219::begin(){
 ********************************************************************************/
 
 //Converts a column-addressed buffer to a display-row-addressed buffer and sends it
-void MS_MAX7219::sendMatrixBuffer(uint8_t *mat){
+void simpleMatrix::sendMatrixBuffer(uint8_t *mat){
   for(int i=0;i<number_of_module;i++){
     for(int k=0;k<8;k++){
         _matrix[i][k] = mat[k+(i*8)]; //Copy *mat to *_matrix with it split up
@@ -94,7 +94,7 @@ void MS_MAX7219::sendMatrixBuffer(uint8_t *mat){
 }
 
 //Sends a custom 8x8 bitmap that is column-addressed. Can scroll it from left to right
-void MS_MAX7219::sendCustomSymbol(int d, uint8_t *mat, bool scroll = false, int del = 0){
+void simpleMatrix::sendCustomSymbol(int d, uint8_t *mat, bool scroll = false, int del = 0){
   uint8_t display[(number_of_module+1)*8];
   for(int i=0;i<(number_of_module+1)*8;i++){display[i] = 0;} // Set *display to 0
   for(int k=0;k<8;k++){
@@ -117,7 +117,7 @@ void MS_MAX7219::sendCustomSymbol(int d, uint8_t *mat, bool scroll = false, int 
 }
 
 //Fills the display. Can fill all or some displays
-void MS_MAX7219::fillDisplay(int from=0, int to=(number_of_module-1)){
+void simpleMatrix::fillDisplay(int from=0, int to=(number_of_module-1)){
   for(int i=from;i<(to+1);i++){
     for(int k=0;k<8;k++){
       _matrix[i][k] = 0xFF;
@@ -127,7 +127,7 @@ void MS_MAX7219::fillDisplay(int from=0, int to=(number_of_module-1)){
 }
 
 //Clears the displays. Can clear all or some displays
-void MS_MAX7219::clearDisplay(int from=0, int to=(number_of_module-1)){
+void simpleMatrix::clearDisplay(int from=0, int to=(number_of_module-1)){
   for(int d=from;d<(to+1);d++){
     for(int i=0;i<8;i++){
       _matrix[d][i] = 0x00;
@@ -137,7 +137,7 @@ void MS_MAX7219::clearDisplay(int from=0, int to=(number_of_module-1)){
 }
 
 //Sends and scrolls a text from left to right which is stored in Flash memory
-void MS_MAX7219::scrollTextPROGMEM(const char *text, int del){
+void simpleMatrix::scrollTextPROGMEM(const char *text, int del){
 	//Buffer will be 2 "immaginary" matrices right of the real one.
 	//This is to have the smooth scolling effect
   const uint8_t charlenght = 6; //The lenght of each char including the lenght of the font.
@@ -189,7 +189,7 @@ void MS_MAX7219::scrollTextPROGMEM(const char *text, int del){
 }
 
 //Sends and scrolls a text from left to right
-void MS_MAX7219::scrollText(char *text, int del){
+void simpleMatrix::scrollText(char *text, int del){
 	//Buffer will be 2 "immaginary" matrices right of the real one.
 	//This is to have the smooth scolling effect
   const uint8_t charlenght = 6; //The lenght of each char including the lenght of the font.
@@ -242,7 +242,7 @@ void MS_MAX7219::scrollText(char *text, int del){
 
 //Scolls a column-adressed buffer from right to left. This buffer is to be the size of the 
 //      whole matrix.
-void MS_MAX7219::scrollBuffer(uint8_t *mat, int del){
+void simpleMatrix::scrollBuffer(uint8_t *mat, int del){
   int buffer_location = (number_of_module+1)*8;  //Location of buffer (right-most)
   int eight_col_sent = 1; //The number of 8 columns sent
   uint8_t display[(number_of_module+2)*8]; //Create buffer w/ 1 "immaginary" matrix
@@ -273,7 +273,7 @@ void MS_MAX7219::scrollBuffer(uint8_t *mat, int del){
   }
 }
 // Scolls a column-adressed buffer from right to left of x column (Better if it's a multiple of 8)
-void MS_MAX7219::scrollBuffer2(uint8_t *mat, int del, int column){
+void simpleMatrix::scrollBuffer2(uint8_t *mat, int del, int column){
   int buffer_location = (number_of_module+1)*8;  //Location of buffer (right-most)
   int eight_col_sent = 1; //The number of 8 columns sent
   uint8_t display[(column)+2]; //Create buffer w/ 2 "immaginary" matrix
@@ -305,6 +305,6 @@ void MS_MAX7219::scrollBuffer2(uint8_t *mat, int del, int column){
 }
 
 //  Sets the intensity of all displays
-void MS_MAX7219::setIntensity(int intensity){
+void simpleMatrix::setIntensity(int intensity){
   sendCommandtoAll(0x0A,intensity); //Set to max intensity
 }

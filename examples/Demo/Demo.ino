@@ -1,14 +1,14 @@
-#include "makerspace_sign.h" //Import the library
+#include "simple_matrix.h" //Import the library
 
 /*
 Initialize the library. The 4 means that the CS pin is connected to pin D4.
 You can change this to whatever you want, just make sure to connect the CS
 pin to the pin number.
-The mk means that any future function calls to the library uses "mk" as the
+The disp means that any future function calls to the library uses "disp" as the
 library's object name. For example, the library has a function called
-"setIntensity", you need to write "mk.setIntensity" to call that function.
+"setIntensity", you need to write "disp.setIntensity" to call that function.
 */
-MS_MAX7219 mk(4);
+simpleMatrix disp(4);
 
 /*
 Store the text to be displayed in memory
@@ -22,16 +22,16 @@ const char text[] PROGMEM = "Hello World!";
 //This code will run only once when the Arduino is turned on.
 void setup(){
   //Starts the library
-  mk.begin();
+  disp.begin();
   //Set the LED's intensity. This value can be anywhere between 0 and 15.
-  mk.setIntensity(0x05);
+  disp.setIntensity(0x05);
 }
 
 //After void setup(), this code will run and loop forever.
 void loop(){
   //Scroll the text "text". The "textDelay" determines how long each
-  //frame is in mS.
-  mk.scrollText(text,textDelay);
+  //    frame is in mS.
+  disp.scrollTextPROGMEM(text, textDelay);
   //After scolling, delay by 1 second.
   delay(1000);
 }

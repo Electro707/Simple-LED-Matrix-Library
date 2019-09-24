@@ -26,6 +26,7 @@ Follow the "Importing a .zip Library" of the guide for this library.
 
 ## To-Do
 Add documentation describing how the LED Matrix will be hooked up to the Arduino with drawings. 
+Create software to easily create a custom "character"
 
 ## Authors
 

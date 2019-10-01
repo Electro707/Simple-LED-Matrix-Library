@@ -1,25 +1,27 @@
 #######################################
-# Syntax Coloring Map For the MK7219
+# Syntax Coloring Map For the LED Matrix
 #######################################
 
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
 
-MK7219   KEYWORD1
+simpleMatrix   KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-MK7219 KEYWORD2
-cleardisplay	KEYWORD2
+begin KEYWORD2
+clearDisplay	KEYWORD2
 fillDisplay	KEYWORD2
-scroll_text	KEYWORD2
-sendMatrixBuffer  KEYWORD2
-setIntensity  KEYWORD2
-setPixel  KEYWORD2
-sendCustomSymbol  KEYWORD2
+scrollText KEYWORD2
+scrollTextPROGMEM KEYWORD2
+sendMatrixBuffer KEYWORD2
+setIntensity KEYWORD2
+setPixel KEYWORD2
+sendCustomSymbol KEYWORD2
+scrollBuffer KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

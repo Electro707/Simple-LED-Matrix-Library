@@ -95,6 +95,9 @@ void simpleMatrix::sendMatrixBuffer(uint8_t *mat){
 
 //Sends a custom 8x8 bitmap that is column-addressed. Can scroll it from left to right
 void simpleMatrix::sendCustomSymbol(int d, uint8_t *mat, bool scroll = false, int del = 0){
+  if(d>number_of_module+1){ // If the matrix position is more than 1+ that current number, return 
+    return;
+  }
   uint8_t display[(number_of_module+1)*8];
   for(int i=0;i<(number_of_module+1)*8;i++){display[i] = 0;} // Set *display to 0
   for(int k=0;k<8;k++){
@@ -105,7 +108,7 @@ void simpleMatrix::sendCustomSymbol(int d, uint8_t *mat, bool scroll = false, in
 		delay(del);
     int location = (d*8)+8; //Sets the right-most location of the bitmap
     while(1){
-      for(int i=0;i<number_of_module*8;i++){display[i] = display[i+1];}  //Scrolls display
+      for(int i=0;i<(number_of_module+1)*8;i++){display[i] = display[i+1];}  //Scrolls display
       sendMatrixBuffer(display);
       delay(del);
       if(location==0){ //If the right-most location = 0, it means that the displays
@@ -240,67 +243,26 @@ void simpleMatrix::scrollText(char *text, int del){
   }
 }
 
-//Scolls a column-adressed buffer from right to left. This buffer is to be the size of the 
-//      whole matrix.
-void simpleMatrix::scrollBuffer(uint8_t *mat, int del){
-  int buffer_location = (number_of_module+1)*8;  //Location of buffer (right-most)
-  int eight_col_sent = 1; //The number of 8 columns sent
-  uint8_t display[(number_of_module+2)*8]; //Create buffer w/ 1 "immaginary" matrix
-  for(int i=0;i<8*(number_of_module+2);i++){display[i] = 0x00;} //Sets *display to 0
-  for(int i=0;i<8;i++){display[i+(number_of_module*8)] = mat[i];} //Sends out 8 columns from *mat
-  sendMatrixBuffer(display);  //Send out *display buffer
-  while(1){
-    delay(del);
-    for(int i=0;i<(number_of_module+2)*8;i++){display[i] = display[i+1];} //Scroll display
-    sendMatrixBuffer(display); //Send out *display buffer
-    buffer_location--;
-    if(buffer_location <= (number_of_module*8)){ //If the buffer location hit the real matrices
-			 //If not all of *mat is sent out(The *mat is the size of the matrix, so comparing
-		 			//eight_col_sent to number_of_module works)
-      if(eight_col_sent != number_of_module){
-				//Send out 8 columns to the 1 "immaginary" buffer
-        for(int i=0;i<8;i++){display[i+(number_of_module*8)] = mat[i+(eight_col_sent*8)];}
-        eight_col_sent++;
-        buffer_location += 8; //Increment buffer location by 8
-      }
-			else{ //Otherwise send a 0
-				display[buffer_location] = 0x00;
-			}
-    }
-    if(buffer_location == 0){ //When the whole *mat buffer are scrolled and out of the matrix
-      break;									//Break out of the while loop
-    }
-  }
-}
 // Scolls a column-adressed buffer from right to left of x column (Better if it's a multiple of 8)
-void simpleMatrix::scrollBuffer2(uint8_t *mat, int del, int column){
-  int buffer_location = (number_of_module+1)*8;  //Location of buffer (right-most)
-  int eight_col_sent = 1; //The number of 8 columns sent
-  uint8_t display[(column)+2]; //Create buffer w/ 2 "immaginary" matrix
-  for(int i=0;i<(column)+2;i++){display[i] = 0x00;} //Sets *display to 0
-  for(int i=0;i<8;i++){display[i+(number_of_module*8)] = mat[i];} //Sends out 8 columns from *mat
-  sendMatrixBuffer(display);  //Send out *display buffer
+void simpleMatrix::scrollBuffer(uint8_t *mat, int del, int column){
+  uint8_t display[(number_of_module+1)*8]; // Create buffer w/ 1 "immaginary" column + number of columns in matrix
+  for(int i=0;i<(number_of_module+1)*8;i++){display[i] = 0x00;} // Sets *display to 0
+  display[1+(number_of_module*8)] = mat[0];   // Send the first array of the object's array to the matrix
+  int column_send = 1;    // Counter to count the number of columns sent
+  sendMatrixBuffer(display);  // Send out *display buffer
   while(1){
-    delay(del);
-    for(int i=0;i<(number_of_module+2)*8;i++){display[i] = display[i+1];} //Scroll display
-    sendMatrixBuffer(display); //Send out *display buffer
-    buffer_location--;
-    if(buffer_location <= (number_of_module*8)){ //If the buffer location hit the real matrices
-			 //If not all of *mat is sent out(The *mat is the size of the matrix, so comparing
-		 			//eight_col_sent to number_of_module works)
-      if(eight_col_sent < (column/8)){
-				//Send out 8 columns to the 1 "immaginary" buffer
-        for(int i=0;i<8;i++){display[i+(number_of_module*8)] = mat[i+(eight_col_sent*8)];}
-        eight_col_sent++;
-        buffer_location += 8; //Increment buffer location by 8
-      }
-		else{ //Otherwise send a 0
-			display[buffer_location] = 0x00;
-		}
+    delay(del);   // Delay by the inputed delay amount
+    for(int i=0;i<(number_of_module*8)+1;i++){display[i] = display[i+1];} // Scroll display
+    sendMatrixBuffer(display); // Send out *display buffer
+    // If the number of column sent is less than or equal to the number of columns in the array,
+    //      send the array data, else send 0
+    display[1+(number_of_module*8)] = (column_send <= column) ? mat[column_send] : 0x00;
+    // If the number of column sent is greater than the number of column in the array + the column size
+    //      of the matrix, exit the while loop as it has scrolled thru the array and scrolled it out of frame
+    if(column_send > column+(number_of_module*8)){
+      break;		// Break out of the while loop
     }
-    if(buffer_location == 0){ //When the whole *mat buffer are scrolled and out of the matrix
-      break;									//Break out of the while loop
-    }
+    column_send++;    // Increment the number of columns sent
   }
 }
 

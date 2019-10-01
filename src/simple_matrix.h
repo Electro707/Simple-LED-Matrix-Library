@@ -21,8 +21,7 @@ class simpleMatrix{
     void setIntensity(int intensity);
     void setPixel(int x, int y, int value);
     void sendCustomSymbol(int d, uint8_t *mat, bool scroll = false, int del = 0);
-    void scrollBuffer(uint8_t *mat, int del);
-	  void scrollBuffer2(uint8_t *mat, int del, int column);
+    void scrollBuffer(uint8_t *mat, int del, int column);
   private:
     uint8_t _matrix[(number_of_module)+2][8];
     int _DL_PIN;

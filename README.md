@@ -1,6 +1,6 @@
 # Simple LED Matrix Library
 
-This is a library to drive MAX7219 LED matrices. This library has been designed to be both simple to use for beignners, while leaving a lot to play around with for advanced users.
+This is a library to drive MAX7219 LED matrices. This library has been designed to be both simple to use for beignners, while leaving a lot to play around with for advanced users. 
 
 ## Getting Started
 

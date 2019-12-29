@@ -37,7 +37,7 @@ Follow the "Importing a .zip Library" of the guide to import the Compressed file
 
 ## License
 
-See the [LICENSE.md](LICENSE.md) file for details
+See the [LICENSE](LICENSE) file for details
 
 ## Notes
 

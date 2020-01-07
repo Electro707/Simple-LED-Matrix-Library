@@ -116,7 +116,7 @@ class GUI():
         self.master.tk_setPalette(background=background_color)
         Label(self.master, text="MAX7219 4-Matrix Generator", font=title_font).pack()
         Label(self.master, text="By Jamal Bouajjaj", font=default_font).pack()
-        self.array_name_entry = Entry(self.master, font = default_font)
+        self.array_name_entry = Entry(self.master, font = default_font, justify='center', background="white")
         self.array_name_entry.insert(0,"ARRAYNAME")
         self.array_name_entry.pack()
 

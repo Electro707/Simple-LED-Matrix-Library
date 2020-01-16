@@ -1,6 +1,6 @@
 # Simple LED Matrix Library
 
-This is a library to drive MAX7219 LED matrices. This library has been designed to be both simple to use for beignners, while leaving a lot to play around with for advanced users.
+This is a library to drive MAX7219 LED matrices. This library has been designed to be both simple to use for beginners, while leaving a lot to play around with for advanced users.
 
 ## Getting Started
 
@@ -23,8 +23,9 @@ To wire the LED Matrix to the Arduino, connect the following pins together.
 ### Installing Library
 
 Install this library by downloading this repository as a ZIP file, then importing it into the Arduino IDE like any other library!
-Like to the official guide can be found [here!](https://www.arduino.cc/en/Guide/Libraries)
-Follow the "Importing a .zip Library" of the guide to import the Compressed file.
+
+Link to the official guide can be found [here!](https://www.arduino.cc/en/Guide/Libraries).
+Follow the "Importing a .zip Library" section of the guide to import this library.
 
 ## To-Do
 - Add documentation describing how the LED Matrix will be hooked up to the Arduino with drawings.

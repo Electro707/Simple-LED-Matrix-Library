@@ -22,7 +22,7 @@ To wire the LED Matrix to the Arduino, connect the following pins together.
 
 ### Installing Library
 
-Install this library by downloading only the Arduino Library folder and compressing it. The compressed Arduino Library folder then can be imported into the Arduino IDE.
+Install this library by downloading this repository as a ZIP file, then importing it into the Arduino IDE like any other library!
 Like to the official guide can be found [here!](https://www.arduino.cc/en/Guide/Libraries)
 Follow the "Importing a .zip Library" of the guide to import the Compressed file.
 

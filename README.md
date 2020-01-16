@@ -6,7 +6,7 @@ This is a library to drive MAX7219 LED matrices. This library has been designed 
 
 To get started, you will need both an Arduino (any kind should work), and a MAX7219 LED Matrix. Both parts can be bought from many places, including Amazon, Ebay, Aliexpress, Adafruit, etc.
 
-For more documentation, see [my website!](https://electro707.com/documentation/projects/simple_led_library/index.php)
+For more documentation, see [my website!](https://www.electro707.com/documentation/Libraries/simple_led_library/index.php)
 
 ## Wiring LED Matrix to Arduino
 

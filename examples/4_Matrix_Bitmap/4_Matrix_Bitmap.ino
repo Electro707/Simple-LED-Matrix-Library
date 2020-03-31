@@ -22,8 +22,8 @@ void setup(){
   disp.begin();
   // Set the LED's intensity. This value can be anywhere between 0 and 15.
   disp.setIntensity(0x02);
-  // Send the custom bitmap to the 4 matrices
-  disp.sendMatrixBuffer(TEST_BITMAP); 
+  // Send the custom bitmap that is 32 columns wide (4 matrices * 8 columns each) starting at position #0
+  disp.sendColumnBuffer(TEST_BITMAP, 4*8, 0); 
 }
 
 // After void setup(), this code will run and loop forever.

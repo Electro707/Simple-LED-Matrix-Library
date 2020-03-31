@@ -1,0 +1,7 @@
+v1.3
+	-Added print function
+	-Added general sendColumnBuffer
+	-Removed sendCustomSymbol (replaced with sendColumnBuffer)
+	-Added 'rotateIndividualDislay' option in the class declaration 
+v1.2
+	-Started to keep track of changes. Anything before this would be a guess based on commit messages. Also started to track versions at 1.2

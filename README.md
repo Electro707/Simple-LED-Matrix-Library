@@ -28,9 +28,8 @@ Link to the official guide can be found [here!](https://www.arduino.cc/en/Guide/
 Follow the "Importing a .zip Library" section of the guide to import this library.
 
 ## To-Do
-- Add documentation describing how the LED Matrix will be hooked up to the Arduino with drawings.
-- Create examples demonstrating how to use the Python Generators and the library
 - Create more examples
+- Have scrolling be able to be done from left to right
 
 ## Authors
 

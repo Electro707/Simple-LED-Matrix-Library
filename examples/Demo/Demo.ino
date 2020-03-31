@@ -13,11 +13,11 @@ simpleMatrix disp(4);
 /*
 Store the text to be displayed in memory
 The PROGMEM means that the text will be stored in the Arduino's
-flash memory instead of RAM
+flash memory instead of RAM. This means that you can a lot more stuff (~27000 characters available)
 */
 const char text[] PROGMEM = "Hello World!";
-//Defines "textDelay" as 100.
-#define textDelay 100
+//Defines "textDelay" as 25ms (Delay between when the display scroll by 1 pixel to the left).
+#define textDelay 25
 
 //This code will run only once when the Arduino is turned on.
 void setup(){

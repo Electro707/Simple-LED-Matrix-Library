@@ -1,7 +1,15 @@
+v1.4 (WPI)
+    -Officially tested the support of more than 4 LED matrices
+    -Added option for left-to-right and right-to-left scrolling
+    -TODO: Document new functions
+    -TODO: Add a new example with procedurally generated trains
+    -TODO: Simply high-level functions
+v1.3.1
+    -Documentation stuff
 v1.3
-	-Added print function
-	-Added general sendColumnBuffer
-	-Removed sendCustomSymbol (replaced with sendColumnBuffer)
-	-Added 'rotateIndividualDislay' option in the class declaration 
+    -Added print function
+    -Added general sendColumnBuffer
+    -Removed sendCustomSymbol (replaced with sendColumnBuffer)
+    -Added 'rotateIndividualDislay' option in the class declaration 
 v1.2
-	-Started to keep track of changes. Anything before this would be a guess based on commit messages. Also started to track versions at 1.2
+    -Started to keep track of changes. Anything before this would be a guess based on commit messages. Also started to track versions at 1.2

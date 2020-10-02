@@ -2,12 +2,9 @@
  * \mainpage
  * \brief A library designed to allow for an easy and quick experience programing an LED matrix with an Arduino, even with little prior knowledge of coding or electronics.
  *
- * \note This library currently only supports a 4 MAX7219 LED matrices display.
- *
  * \todo Create more examples.
  * \todo Publish pictures.
  * \todo Have scrolling be able to be done from left to right.
- * \todo Have the option to have more than 4 MAX7219 LED matrices.
  * \todo Add full support for the MAX7221 chipset.
  *
  * <a href="https://github.com/Electro707/Simple-LED-Matrix-Library">Link to the library's Github repository</a>
@@ -15,7 +12,8 @@
  * To check out the old documentation page, click <a href="https://electro707.com/documentation/Libraries/simple_led_library_old_docs/index.php">Here!</a>
  *
  * \section Installation
- * To install the library, the prefered method is by using the Arduino's Library Manager. Simply looking for <em>simple led matrix</em> should bring up this library. THe other way to install this library is to install it as a ZIP library downloaded from the Github repository.
+ * To install the library, the prefered method is by using the Arduino's Library Manager. Simply looking for <em>simple led matrix</em> 
+ * should bring up this library. THe other way to install this library is to install it as a ZIP library downloaded from the Github repository.
  */
 
 #ifndef SIMPLEMATRIX_H
@@ -25,9 +23,18 @@
 #include <SPI.h>
 #include <avr/pgmspace.h>
 
-#ifndef NUMBER_OF_MODULES
-#define NUMBER_OF_MODULES 4
+/**
+ * \brief A define that determines the number of 8x8 LED modules.
+ * By default 4 LED matrices will be used. \n
+ * Must define this before #include<simple_matrix.h> is called.
+ * The reason this is in the pre-processor instead of a variabled fed into the simpleMatrix constructor 
+ * is to allow for default arguments into functions like clearDisplay.
+ */
+#ifndef SIMPLEMATRIX_NUMBER_OF_MODULES
+#define SIMPLEMATRIX_NUMBER_OF_MODULES 4
 #endif
+
+#define FONT_CHAR_LENGHT 6
 
 class simpleMatrix{
     public:
@@ -50,7 +57,7 @@ class simpleMatrix{
          * \param from Which LED matrix to start clearing from.
          * \param to Which LED matrix to clear up to.
          */
-        void clearDisplay(int from=0, int to=(NUMBER_OF_MODULES-1));
+        void clearDisplay(int from=0, int to=(SIMPLEMATRIX_NUMBER_OF_MODULES-1));
 
         /**
          * \brief Fills the display.
@@ -58,7 +65,7 @@ class simpleMatrix{
          * \param from Which LED matrix to start filling from.
          * \param to Which LED matrix to fill up to.
          */
-        void fillDisplay(int from=0, int to=(NUMBER_OF_MODULES-1));
+        void fillDisplay(int from=0, int to=(SIMPLEMATRIX_NUMBER_OF_MODULES-1));
 
         /**
          * \brief Scroll a word/sentence from right to left.
@@ -66,7 +73,7 @@ class simpleMatrix{
          * \param del The delay between each frame while scrolling.
          * \param start_from Which column the text will start scrolling from.
          */
-        void scrollText(char *text, int del, int start_from=(NUMBER_OF_MODULES*8)+1);
+        void scrollText(char *text, int del, int start_from=(SIMPLEMATRIX_NUMBER_OF_MODULES*8)+1);
 
         /**
          * \brief Same as function scrollText(), but the text is stored in Flash memory instead of RAM.
@@ -76,7 +83,7 @@ class simpleMatrix{
          * \param del The delay between each frame while scrolling.
          * \param start_from Which column the text will start scrolling from.
          */
-        void scrollTextPROGMEM(const char *text, int del, int start_from=(NUMBER_OF_MODULES*8)+1);
+        void scrollTextPROGMEM(const char *text, int del, int start_from=(SIMPLEMATRIX_NUMBER_OF_MODULES*8)+1, bool left_to_right=false);
         
         /**
          * \brief Sends some text to the display, with the option to have it scroll from right to left.
@@ -86,7 +93,7 @@ class simpleMatrix{
          * \param scroll_text Whether the outputed display will be scrolled from right to left.
          * \param del The delay between each frame while scrolling.
          */
-        void print(char *text, int start_from=0, bool is_text_progmem=false, bool scroll_text=false, int del=0);
+        void print(char *text, int start_from=0, bool is_text_progmem=false, bool scroll_text=false, int del=0, bool left_to_right=false);
         
         /**
          * \brief Set the intensity of the LED matrix.
@@ -109,7 +116,7 @@ class simpleMatrix{
          * \param column The number of columns to be sent out (in most cases this would be the same as the size of the *mat array).
          * \param start_from Where the buffer will start at in the display.
          */
-        void scrollBuffer(uint8_t *mat, int del, int column, int start_from=(NUMBER_OF_MODULES*8)+1);
+        void scrollBuffer(uint8_t *mat, int del, int column, int start_from=(SIMPLEMATRIX_NUMBER_OF_MODULES*8)+1);
 
         /**
          * \brief General function to send over a column-arrayed buffer. Can be scrolled or not, depending in preference.
@@ -127,15 +134,24 @@ class simpleMatrix{
          * \warning This function should not be directly used.
          * \param *mat A column-addressed array that contains the bytes (*mat must be an array of uint8_t type) of size that is equal to the number of columns in your buffer (For a 4 matrix display, there will be 32 columns)
          */
-        void sendMatrixBuffer(uint8_t *mat);
+        void sendMatrixBuffer(uint8_t *mat, int start_from=0);
     private:
-        uint8_t _matrix[NUMBER_OF_MODULES+1][8];
-        uint8_t _matrix_col[(NUMBER_OF_MODULES)*8];   // A copy of a column_addressed matrix
+        // Internal 2D array that is addressed by row and by the LED matrix number that is used to update the displays
+        uint8_t _matrix[SIMPLEMATRIX_NUMBER_OF_MODULES+1][8];
+         // A copy of a column_addressed matrix. Used as memory for when new stuff is scrolled unto the display.
+        uint8_t _matrix_col[(SIMPLEMATRIX_NUMBER_OF_MODULES)*8];  
         bool _ROTATE_INDIV_DISPLAY;
         int _DL_PIN;
-        void senddisplay(); //Sends the _matrix buffer
+        //Sends the _matrix buffer to the displays
+        void senddisplay(); 
+        // Internal function to send a command and data to all matrices.
         void sendCommandtoAll(uint8_t command, uint8_t data);
+        // Internal function to send a command and data to a specific display number.
         void sendCommandtoOne(uint8_t command, uint8_t data, uint8_t display);
+        // Internal function to scroll some text from left to right
+        void scroll_text_left_to_right(uint8_t *text, int del, bool is_text_progmem, int missed_text_cols, int start_letter_on_matrix, uint8_t *display);
+        // Internal function to scroll some text from right to left
+        void scroll_text_right_to_left(uint8_t *text, int del, bool is_text_progmem, int text_cols_to_send, int end_letter_on_matrix, uint8_t *display, int text_arr_lenght);
 };
 
 #endif

@@ -1,9 +1,12 @@
 v1.4 (WPI)
     -Officially tested the support of more than 4 LED matrices
     -Added option for left-to-right and right-to-left scrolling
+    -Streamlined and partially simplified scrolling functions
+    -Fixed absolute reference for Doxyfile
+    -Fixed scrolling bug
+    -Fixed C++ warnings
     -TODO: Document new functions
     -TODO: Add a new example with procedurally generated trains
-    -TODO: Simply high-level functions
 v1.3.1
     -Documentation stuff
 v1.3

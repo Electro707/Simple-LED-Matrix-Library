@@ -126,90 +126,43 @@ void simpleMatrix::clearDisplay(int from, int to){
 }
 
 //Sends and scrolls a text from right to left which is stored in Flash memory
-void simpleMatrix::scrollTextPROGMEM(const char *text, int del, int start_from, bool left_to_right){
+void simpleMatrix::scrollTextPROGMEM(const char *text, int del, bool left_to_right, int start_from){
+    // If the default value is unchanged, set the start from the end of the matrix
+    if(start_from == (int)0x8000){
+        start_from = left_to_right ? -(strlen(text)*FONT_CHAR_LENGHT) : (8*SIMPLEMATRIX_NUMBER_OF_MODULES)+1;
+    }
     print(text, start_from, true, true, del, left_to_right);
 }
-
-//Sends and scrolls a text from right to left
-void simpleMatrix::scrollText(char *text, int del, int start_from){
-    print(text, start_from, false, true, del);
+// Wrapper for scrollTextPROGMEM for simple usage
+void simpleMatrix::scrollTextPROGMEMRightToLeft(const char *text, int del, int start_from){
+    scrollTextPROGMEM(text, del, false, start_from);
 }
 
-// Sends text with an option to scoll it
-// void simpleMatrix::print(char *text, int start_from=0, bool is_text_progmem=false, bool scroll_text=false, int del=0){
-// 	Buffer will be 2 "immaginary" matrices right of the real one.
-// 	This is to have the smooth scolling effect
-// 	uint8_t display[8*(SIMPLEMATRIX_NUMBER_OF_MODULES+2)]; //Internal display buffer
-// 	const uint8_t charlenght = 6; //The lenght of each char including the lenght of the font.
-// 	int text_lenght = strlen(text);
-// 	for(int i=0;i<8*(SIMPLEMATRIX_NUMBER_OF_MODULES+2);i++){display[i] = 0x00;} //Sets *display to 0
-// 	int lettercount = 0;
-// 	Sends out letters in the "immaginary" matrices, which is 2 of them.
-// 	The i-max is divided the multipled by char becuase when dividing, the MCU will round
-// 	down, thus only sending out the number of characters that will fit the 2 "immaginary" matrices
-// 	int i=0;
-// 	while(1){
-// 		if((i%charlenght)>=5){ //If the remainder of i%charlenght is more then 5(font size), send 0's
-// 			display[i+start_from] = 0x00;
-// 		}
-// 		else{ //Send out the font
-// 			if(is_text_progmem){
-// 				display[i+start_from] = (font[ pgm_read_byte_near(text + (i/charlenght))-0x20 ][ i%charlenght ]);
-// 			}
-// 			else{
-// 				display[i+start_from] = (font[ text[i/charlenght]-0x20][ i%charlenght ]);
-// 			}
-// 		}
-// 		
-// 		i++;
-// 		if((i%charlenght)==0){ //If the remainder of i%charlenght is more then 5(font size), send 0's
-// 			lettercount++;
-// 		}
-// 		if(((lettercount+1)*charlenght)+start_from >= 8*(SIMPLEMATRIX_NUMBER_OF_MODULES+2)){
-// 			break;
-// 		}
-// 		
-// 	}
-// 	int lettercount = i/charlenght;
-// 	int buffer_location = i + start_from;
-// 	sendMatrixBuffer(display); //Send out the display
-// 
-// 	if(scroll_text){
-// 		while(1){
-// 			delay(del);
-// 			for(int i=0;i<((SIMPLEMATRIX_NUMBER_OF_MODULES+2)*8)-1;i++){display[i] = display[i+1];} //Scrolls the display
-// 			sendMatrixBuffer(display); //Send out the display
-// 			buffer_location--;
-// 			if(buffer_location <= (8*SIMPLEMATRIX_NUMBER_OF_MODULES)){ //When the buffer location reaches the real matrices
-// 				if(lettercount < text_lenght){ //If the number of letters sent is less than the text lenght
-// 					for(int i=0;i<charlenght;i++){ //Send out one character in the "immaginary" matrices
-// 						if((i%charlenght)>=5){  //If the remainder of i%charlenght is more then 5(font size), send 0's
-// 							display[i+(8*SIMPLEMATRIX_NUMBER_OF_MODULES)] = 0x00;
-// 						}
-// 						else{ //Send out the font
-// 							if(is_text_progmem){
-// 								display[i+(8*SIMPLEMATRIX_NUMBER_OF_MODULES)] = (font[ pgm_read_byte_near(text + lettercount)-0x20 ][ i ]);
-// 							}
-// 							else{
-// 								display[i+(8*SIMPLEMATRIX_NUMBER_OF_MODULES)] = (font[ text[lettercount]-0x20][ i ]); 
-// 							}
-// 						}
-// 					}
-// 					buffer_location += charlenght; //Increment buffer_location after character is sent
-// 					lettercount++; //Increment the nubmer of letters sent
-// 				}
-// 				else{
-// 					display[buffer_location] = 0x00; //Sends 0's if we already send out all of letters
-// 				}
-// 			}
-// 			if(buffer_location == 0){ //When all the letters are scrolled and out of the matrix
-// 				break;  //Break out of the while loop
-// 			}
-// 		}
-// 	}
-// }
+// Wrapper for scrollTextPROGMEM for simple usage
+void simpleMatrix::scrollTextPROGMEMLeftToRight(const char *text, int del, int start_from){
+    scrollTextPROGMEM(text, del, true, start_from);
+}
 
-void simpleMatrix::print(char *text, int start_from, bool is_text_progmem, bool scroll_text, int del, bool left_to_right){
+// Function that scrolls a text left or right
+void simpleMatrix::scrollText(const char *text, int del, bool left_to_right, int start_from){
+    // If the default value is unchanged, set the start from the end of the matrix
+    if(start_from == (int)0x8000){
+        start_from = left_to_right ? -(strlen(text)*FONT_CHAR_LENGHT) : (8*SIMPLEMATRIX_NUMBER_OF_MODULES)+1;
+    }
+    print(text, start_from, false, true, del, left_to_right);
+}
+
+// Wrapper for scrollText for simple usage
+void simpleMatrix::scrollTextRightToLeft(const char *text, int del, int start_from){
+    scrollText(text, del, false, start_from);
+}
+
+// Wrapper for scrollText for simple usage
+void simpleMatrix::scrollTextLeftToRight(const char *text, int del, int start_from){
+    scrollText(text, del, false, start_from);
+}
+
+void simpleMatrix::print(const char *text, int start_from, bool is_text_progmem, bool scroll_text, int del, bool left_to_right){
     uint8_t display[8*SIMPLEMATRIX_NUMBER_OF_MODULES];     // Internal display buffer
     int text_lenght = strlen(text);                        // The lenght of the string
     int text_arr_lenght = text_lenght*FONT_CHAR_LENGHT;          // The column lenght of the text 
@@ -228,6 +181,7 @@ void simpleMatrix::print(char *text, int start_from, bool is_text_progmem, bool 
             continue;
         }
         else if(start_from+i==0){
+            //TODO: Check other start positions for start_letter_on_matrix
             start_letter_on_matrix = i+start_from;
             missed_text_cols = i;
         }
@@ -252,6 +206,7 @@ void simpleMatrix::print(char *text, int start_from, bool is_text_progmem, bool 
         
     }
     sendMatrixBuffer(display); //Send out the display
+    // If the option for scrolling is there, do so depending if it's left to right or right to left
     if(scroll_text){
         if(left_to_right){
             scroll_text_left_to_right(text, del, is_text_progmem, missed_text_cols, start_letter_on_matrix, display);
@@ -272,7 +227,9 @@ void simpleMatrix::scrollBuffer(uint8_t *mat, int del, int column, int start_fro
 // General function to send over a column-arrayed buffer. Can be scrolled or not, depending in preference
 void simpleMatrix::sendColumnBuffer(uint8_t *mat, int column, int start_from, bool scroll, int del){
     uint8_t display[(SIMPLEMATRIX_NUMBER_OF_MODULES+1)*8]; // Create buffer w/ 1 "immaginary" column + number of columns in matrix
-    for(int i=0;i<(SIMPLEMATRIX_NUMBER_OF_MODULES+1)*8;i++){display[i] = _matrix_col[i];} // Sets *display to copy of current display
+    for(int i=0;i<(SIMPLEMATRIX_NUMBER_OF_MODULES+1)*8;i++){display[i] = 0x00;} // Sets *display to all 0's to start with
+        for(int i=0;i<SIMPLEMATRIX_NUMBER_OF_MODULES*8;i++){display[i] = _matrix_col[i];} // Sets *display to copy of current display
+
     int column_send = 0;
     for(int i=start_from;i<=(SIMPLEMATRIX_NUMBER_OF_MODULES*8)+1;i++){
         display[i] = mat[i-start_from]; 
@@ -303,12 +260,13 @@ void simpleMatrix::setIntensity(int intensity){
     sendCommandtoAll(0x0A,intensity); //Set to max intensity
 }
 
-void simpleMatrix::scroll_text_left_to_right(uint8_t *text, int del, bool is_text_progmem, int missed_text_cols, int start_letter_on_matrix, uint8_t *display){
+void simpleMatrix::scroll_text_left_to_right(const char  *text, int del, bool is_text_progmem, int missed_text_cols, int start_letter_on_matrix, uint8_t *display){
     delay(del);
+    while(missed_text_cols > strlen(text)*FONT_CHAR_LENGHT){missed_text_cols--;}
+    while(start_letter_on_matrix < 0){start_letter_on_matrix++;}
     while(1){
         for(int i=(SIMPLEMATRIX_NUMBER_OF_MODULES*8)-1;i>0;i--){display[i] = display[i-1];} //Scrolls the display
-        
-        if(missed_text_cols >= 0){
+        if(missed_text_cols > 0){
             missed_text_cols--;
             if((missed_text_cols%FONT_CHAR_LENGHT)>=5){ //If the remainder of i%FONT_CHAR_LENGHT is more then 5(font size), send 0's
                 display[start_letter_on_matrix] = 0x00;
@@ -336,12 +294,12 @@ void simpleMatrix::scroll_text_left_to_right(uint8_t *text, int del, bool is_tex
     }
 }
 
-void simpleMatrix::scroll_text_right_to_left(uint8_t *text, int del, bool is_text_progmem, int text_cols_to_send, int end_letter_on_matrix, uint8_t *display, int text_arr_lenght){
+void simpleMatrix::scroll_text_right_to_left(const char  *text, int del, bool is_text_progmem, int text_cols_to_send, int end_letter_on_matrix, uint8_t *display, int text_arr_lenght){
     delay(del);
     while(1){
+        if(end_letter_on_matrix >= SIMPLEMATRIX_NUMBER_OF_MODULES*8){delay(del); end_letter_on_matrix--; continue;}
         for(int i=0;i<(SIMPLEMATRIX_NUMBER_OF_MODULES*8)-1;i++){display[i] = display[i+1];} //Scrolls the display
-        
-        if(text_cols_to_send < text_arr_lenght){
+        if(text_cols_to_send < text_arr_lenght-1){
             text_cols_to_send++;
             if((text_cols_to_send%FONT_CHAR_LENGHT)>=5){ //If the remainder of i%FONT_CHAR_LENGHT is more then 5(font size), send 0's
                 display[end_letter_on_matrix] = 0x00;
@@ -354,7 +312,6 @@ void simpleMatrix::scroll_text_right_to_left(uint8_t *text, int del, bool is_tex
                     display[end_letter_on_matrix] = (font[ text[text_cols_to_send/FONT_CHAR_LENGHT]-0x20][ text_cols_to_send%FONT_CHAR_LENGHT]);
                 }
             }
-            Serial.println(text_cols_to_send);
         }
         else{
             display[end_letter_on_matrix] = 0x00; //Sends 0's if we already send out all of letters

@@ -66,34 +66,75 @@ class simpleMatrix{
          * \param to Which LED matrix to fill up to.
          */
         void fillDisplay(int from=0, int to=(SIMPLEMATRIX_NUMBER_OF_MODULES-1));
+        
+        
+        /**
+         * \brief Scrolls a text left or right
+         * \param del The delay between each frame while scrolling.
+         * \param *text Any word/sentence you want.
+         * \param left_to_right Whether the text will be scrolled left to right or right to left. \n
+         *                      false for right to left, true for left to right
+         * \param start_from Which column the text will start scrolling from. 
+         *                   Defaults to have the display be empty then having the text apear for both directions
+         */
+        void scrollText(const char *text, int del, bool left_to_right=false, int start_from=0x8000);
 
         /**
-         * \brief Scroll a word/sentence from right to left.
+         * \brief Wrapper for scrollText() that simplifies programming. Scrolls text from left to right.
          * \param *text Any word/sentence you want.
          * \param del The delay between each frame while scrolling.
-         * \param start_from Which column the text will start scrolling from.
+         * \param start_from Where will the test start from. Defaults to having the text's ending be at the start of the matrix array.
          */
-        void scrollText(char *text, int del, int start_from=(SIMPLEMATRIX_NUMBER_OF_MODULES*8)+1);
+        void scrollTextLeftToRight(const char *text, int del, int start_from=0x8000);
+
+        /**
+         * \brief Wrapper for scrollText() that simplifies programming. Scrolls text from right to left.
+         * \param *text Any word/sentence you want.
+         * \param del The delay between each frame while scrolling.
+         * \param start_from Where will the test start from. Defaults to having the end of the text at the begining of the matrix.
+         */
+        void scrollTextRightToLeft(const char *text, int del, int start_from=0x8000);
 
         /**
          * \brief Same as function scrollText(), but the text is stored in Flash memory instead of RAM.
          *        This allows for arbitrarily long messages to be displayed without any RAM issues/overflow.
          * \param *text A constant char array consisting of the word/sentence to be sent out. \n
          *              \b WARNING: For AVR architectures, the *text array must also have the pretense PROGMEM so the string is stored in the flash memory instead of RAM.
+         * \param left_to_right Whether the text will be scrolled left to right or right to left. \n
+         *                      false for right to left, true for left to right
          * \param del The delay between each frame while scrolling.
          * \param start_from Which column the text will start scrolling from.
          */
-        void scrollTextPROGMEM(const char *text, int del, int start_from=(SIMPLEMATRIX_NUMBER_OF_MODULES*8)+1, bool left_to_right=false);
+        void scrollTextPROGMEM(const char *text, int del, bool left_to_right=false, int start_from=0x8000);
         
         /**
-         * \brief Sends some text to the display, with the option to have it scroll from right to left.
+         * \brief Same as scrollTextLeftToRight(), but the text is stored in FLASH memory instead of RAM (with PROGMEM)
+         * \param *text A constant char array consisting of the word/sentence to be sent out. \n
+         *              \b WARNING: For AVR architectures, the *text array must also have the pretense PROGMEM so the string is stored in the flash memory instead of RAM.
+         * \param del The delay between each frame while scrolling.
+         * \param start_from Where will the test start from. Defaults to having the text's ending be at the start of the matrix array.
+         */
+        void scrollTextPROGMEMLeftToRight(const char *text, int del, int start_from=0x8000);
+
+        /**
+         * \brief Same as scrollTextRightToLeft(), but the text is stored in FLASH memory instead of RAM (with PROGMEM)
+         * \param *text A constant char array consisting of the word/sentence to be sent out. \n
+         *              \b WARNING: For AVR architectures, the *text array must also have the pretense PROGMEM so the string is stored in the flash memory instead of RAM.
+         * \param del The delay between each frame while scrolling.
+         * \param start_from Where will the test start from. Defaults to having the end of the text at the begining of the matrix.
+         */
+        void scrollTextPROGMEMRightToLeft(const char *text, int del, int start_from=0x8000);
+        
+        /**
+         * \brief Sends some text to the display, with the option to have it scroll.
          * \param *text The string that you want to send (must be a char array).
          * \param start_from The position where the text will start in the display.
          * \param is_text_progmem Whether the text is stored in Flash or RAM.
          * \param scroll_text Whether the outputed display will be scrolled from right to left.
          * \param del The delay between each frame while scrolling.
+         * \param left_to_right false for the text to be scrolled from left to right, true to be scrolled from right to left.
          */
-        void print(char *text, int start_from=0, bool is_text_progmem=false, bool scroll_text=false, int del=0, bool left_to_right=false);
+        void print(const char *text, int start_from=0, bool is_text_progmem=false, bool scroll_text=false, int del=0, bool left_to_right=false);
         
         /**
          * \brief Set the intensity of the LED matrix.
@@ -133,6 +174,7 @@ class simpleMatrix{
          * \brief Sends a custom 32x8 bitmap to the matrices. 
          * \warning This function should not be directly used.
          * \param *mat A column-addressed array that contains the bytes (*mat must be an array of uint8_t type) of size that is equal to the number of columns in your buffer (For a 4 matrix display, there will be 32 columns)
+         * \param start_from The offset in the *mat where the function will start accessing.
          */
         void sendMatrixBuffer(uint8_t *mat, int start_from=0);
     private:
@@ -149,9 +191,9 @@ class simpleMatrix{
         // Internal function to send a command and data to a specific display number.
         void sendCommandtoOne(uint8_t command, uint8_t data, uint8_t display);
         // Internal function to scroll some text from left to right
-        void scroll_text_left_to_right(uint8_t *text, int del, bool is_text_progmem, int missed_text_cols, int start_letter_on_matrix, uint8_t *display);
+        void scroll_text_left_to_right(const char *text, int del, bool is_text_progmem, int missed_text_cols, int start_letter_on_matrix, uint8_t *display);
         // Internal function to scroll some text from right to left
-        void scroll_text_right_to_left(uint8_t *text, int del, bool is_text_progmem, int text_cols_to_send, int end_letter_on_matrix, uint8_t *display, int text_arr_lenght);
+        void scroll_text_right_to_left(const char *text, int del, bool is_text_progmem, int text_cols_to_send, int end_letter_on_matrix, uint8_t *display, int text_arr_lenght);
 };
 
 #endif

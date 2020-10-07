@@ -159,7 +159,7 @@ void simpleMatrix::scrollTextRightToLeft(const char *text, int del, int start_fr
 
 // Wrapper for scrollText for simple usage
 void simpleMatrix::scrollTextLeftToRight(const char *text, int del, int start_from){
-    scrollText(text, del, false, start_from);
+    scrollText(text, del, true, start_from);
 }
 
 void simpleMatrix::print(const char *text, int start_from, bool is_text_progmem, bool scroll_text, int del, bool left_to_right){
@@ -170,7 +170,7 @@ void simpleMatrix::print(const char *text, int start_from, bool is_text_progmem,
     
     int start_letter_on_matrix;         // Where does the text start on the display
     int end_letter_on_matrix;           // Where does the text end on the display
-    int missed_text_cols;               // The number of columns from the text that was missed (to fill the display when scrolling)
+    int missed_text_cols = 0;               // The number of columns from the text that was missed (to fill the display when scrolling)
     int text_cols_to_send;              // The number of columns from the text that still needs to be sent
     
     int i=-1;
@@ -186,7 +186,7 @@ void simpleMatrix::print(const char *text, int start_from, bool is_text_progmem,
             missed_text_cols = i;
         }
         
-        if(start_from+i >= 8*SIMPLEMATRIX_NUMBER_OF_MODULES || i > text_arr_lenght){
+        if(start_from+i >= 8*SIMPLEMATRIX_NUMBER_OF_MODULES || i >= text_arr_lenght){
             end_letter_on_matrix = i+start_from-1;
             text_cols_to_send = i-1;
             break;
@@ -262,7 +262,7 @@ void simpleMatrix::setIntensity(int intensity){
 
 void simpleMatrix::scroll_text_left_to_right(const char  *text, int del, bool is_text_progmem, int missed_text_cols, int start_letter_on_matrix, uint8_t *display){
     delay(del);
-    while(missed_text_cols > strlen(text)*FONT_CHAR_LENGHT){missed_text_cols--;}
+    while(missed_text_cols > (int)strlen(text)*FONT_CHAR_LENGHT){missed_text_cols--;}
     while(start_letter_on_matrix < 0){start_letter_on_matrix++;}
     while(1){
         for(int i=(SIMPLEMATRIX_NUMBER_OF_MODULES*8)-1;i>0;i--){display[i] = display[i-1];} //Scrolls the display

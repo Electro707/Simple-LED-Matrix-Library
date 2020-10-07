@@ -31,7 +31,7 @@
  * is to allow for default arguments into functions like clearDisplay.
  */
 #ifndef SIMPLEMATRIX_NUMBER_OF_MODULES
-#define SIMPLEMATRIX_NUMBER_OF_MODULES 4
+#define SIMPLEMATRIX_NUMBER_OF_MODULES 12
 #endif
 
 #define FONT_CHAR_LENGHT 6

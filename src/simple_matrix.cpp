@@ -11,15 +11,22 @@ Originally designed for the University of New Haven's
 
     Author: Jamal Bouajjaj
 ********************************************************************************/
+// Macro to treat the 1D array _matrix as a 2D array
+#define _GET_MATRIX_LOC(_Y, _X) _matrix[(8*_Y)+_X]
 
 /********************************************************************************
 Constructor
 ********************************************************************************/
 //The library's constructor. Sets the internal _DL_PIN value to pin and
 //sends the pin as an OUTPUT and turns it HIGH
-simpleMatrix::simpleMatrix(int pin, bool rotateIndividualDislay){
+simpleMatrix::simpleMatrix(int pin, bool rotateIndividualDislay, unsigned int numb_modules){
     _DL_PIN = pin;
     _ROTATE_INDIV_DISPLAY = rotateIndividualDislay;
+    _NUMB_OF_LED_MATRICES = numb_modules;
+    // Internal 2D array that is addressed by row and by the LED matrix number that is used to update the displays
+    _matrix = new uint8_t[(_NUMB_OF_LED_MATRICES+1)*8];
+    // A copy of a column_addressed matrix. Used as memory for when new stuff is scrolled unto the display.
+    _matrix_col = new uint8_t[(_NUMB_OF_LED_MATRICES)*8];  
     pinMode(_DL_PIN,OUTPUT);
     digitalWrite(_DL_PIN,HIGH);
 }
@@ -28,19 +35,19 @@ Low Level Function
 ********************************************************************************/
 //Sends a command to a single MS7219
 void simpleMatrix::sendCommandtoOne(uint8_t command, uint8_t data, uint8_t display){
-    uint8_t d[SIMPLEMATRIX_NUMBER_OF_MODULES*2]; //Array that containts data to be sent
+    uint8_t d[_NUMB_OF_LED_MATRICES*2]; //Array that containts data to be sent
     d[2*display] = command;
     d[(2*display)+1] = data;
     digitalWrite(_DL_PIN,LOW);
-    for(int k=0;k<SIMPLEMATRIX_NUMBER_OF_MODULES*2;k++){SPI.transfer(d[k]);} // Send data
-    for(int k=0;k<SIMPLEMATRIX_NUMBER_OF_MODULES*8;k++){_matrix_col[k] = 0; _matrix[k/SIMPLEMATRIX_NUMBER_OF_MODULES][k%SIMPLEMATRIX_NUMBER_OF_MODULES] = 0;}
+    for(int k=0;k<_NUMB_OF_LED_MATRICES*2;k++){SPI.transfer(d[k]);} // Send data
+    for(int k=0;k<_NUMB_OF_LED_MATRICES*8;k++){_matrix_col[k] = 0; _GET_MATRIX_LOC(k/_NUMB_OF_LED_MATRICES, k%_NUMB_OF_LED_MATRICES) = 0;}
     digitalWrite(_DL_PIN,HIGH);
 }
 
 //Sends a command to all MAX7219s
 void simpleMatrix::sendCommandtoAll(uint8_t command, uint8_t data){
     digitalWrite(_DL_PIN,LOW);
-    for(int i=0;i<SIMPLEMATRIX_NUMBER_OF_MODULES;i++){
+    for(int i=0;i<_NUMB_OF_LED_MATRICES;i++){
         SPI.transfer(command);
         SPI.transfer(data);
     }
@@ -52,9 +59,9 @@ void simpleMatrix::sendCommandtoAll(uint8_t command, uint8_t data){
 void simpleMatrix::senddisplay(){
     for(int r=0;r<8;r++){ //8 rows
         digitalWrite(_DL_PIN,LOW);
-        for(int i=0;i<SIMPLEMATRIX_NUMBER_OF_MODULES;i++){
+        for(int i=0;i<_NUMB_OF_LED_MATRICES;i++){
             SPI.transfer(r+1);
-            SPI.transfer(_matrix[i][r]);
+            SPI.transfer(_GET_MATRIX_LOC(i, r));
         }
     digitalWrite(_DL_PIN,HIGH);
     }
@@ -78,14 +85,14 @@ High-Level functions
 
 //Converts a column-addressed buffer to a display-row-addressed buffer and sends it
 void simpleMatrix::sendMatrixBuffer(uint8_t *mat, int start_from){
-    for(int i=0;i<SIMPLEMATRIX_NUMBER_OF_MODULES;i++){
+    for(int i=0;i<_NUMB_OF_LED_MATRICES;i++){
         for(int k=0;k<8;k++){
             _matrix_col[k+(i*8)] = mat[k+(i*8)+start_from];
-            _matrix[i][k] = mat[k+(i*8)+start_from]; //Copy *mat to *_matrix with it split up
+            _GET_MATRIX_LOC(i, k) = mat[k+(i*8)+start_from]; //Copy *mat to *_matrix with it split up
         }
     }
     //Function to transpose display (Thanks Spencer Hopwood!)
-    for(int d=0;d<SIMPLEMATRIX_NUMBER_OF_MODULES;d++){
+    for(int d=0;d<_NUMB_OF_LED_MATRICES;d++){
         uint8_t temp[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
         for(int i=0;i<8;i++){
             uint8_t bitmask_v = 1<<(i);
@@ -94,22 +101,23 @@ void simpleMatrix::sendMatrixBuffer(uint8_t *mat, int start_from){
                 // To combat this, there is a flag which will decide whether or not to rotate
                 // each matrix's buffer by 180degrees
                 if(_ROTATE_INDIV_DISPLAY){
-                    temp[7-i] |= ((_matrix[d][k] & bitmask_v) >> (i)) << (7-k); 
+                    temp[7-i] |= ((_GET_MATRIX_LOC(d, k) & bitmask_v) >> (i)) << (7-k); 
                 }else{
-                    temp[i] |= ((_matrix[d][k] & bitmask_v) >> (i)) << (k);
+                    temp[i] |= ((_GET_MATRIX_LOC(d, k) & bitmask_v) >> (i)) << (k);
                 }
             }
         }
-        for(int i=0;i<8;i++){_matrix[d][i] = temp[i];}
+        for(int i=0;i<8;i++){_GET_MATRIX_LOC(d, i) = temp[i];}
     }
     senddisplay();
 }
 
 //Fills the display. Can fill all or some displays
 void simpleMatrix::fillDisplay(int from, int to){
+    if(to==(int)0x8000){to=_NUMB_OF_LED_MATRICES-1;}
     for(int i=from;i<(to+1);i++){
         for(int k=0;k<8;k++){
-            _matrix[i][k] = 0xFF;
+            _GET_MATRIX_LOC(i, k) = 0xFF;
         }
     }
     senddisplay();
@@ -117,9 +125,10 @@ void simpleMatrix::fillDisplay(int from, int to){
 
 //Clears the displays. Can clear all or some displays
 void simpleMatrix::clearDisplay(int from, int to){
+    if(to==(int)0x8000){to=_NUMB_OF_LED_MATRICES-1;}
     for(int d=from;d<(to+1);d++){
         for(int i=0;i<8;i++){
-            _matrix[d][i] = 0x00;
+            _GET_MATRIX_LOC(d, i) = 0x00;
         }
     }
     senddisplay();
@@ -129,7 +138,7 @@ void simpleMatrix::clearDisplay(int from, int to){
 void simpleMatrix::scrollTextPROGMEM(const char *text, int del, bool left_to_right, int start_from){
     // If the default value is unchanged, set the start from the end of the matrix
     if(start_from == (int)0x8000){
-        start_from = left_to_right ? -(strlen(text)*FONT_CHAR_LENGHT) : (8*SIMPLEMATRIX_NUMBER_OF_MODULES)+1;
+        start_from = left_to_right ? -(strlen(text)*FONT_CHAR_LENGHT) : (8*_NUMB_OF_LED_MATRICES)+1;
     }
     print(text, start_from, true, true, del, left_to_right);
 }
@@ -147,7 +156,7 @@ void simpleMatrix::scrollTextPROGMEMLeftToRight(const char *text, int del, int s
 void simpleMatrix::scrollText(const char *text, int del, bool left_to_right, int start_from){
     // If the default value is unchanged, set the start from the end of the matrix
     if(start_from == (int)0x8000){
-        start_from = left_to_right ? -(strlen(text)*FONT_CHAR_LENGHT) : (8*SIMPLEMATRIX_NUMBER_OF_MODULES)+1;
+        start_from = left_to_right ? -(strlen(text)*FONT_CHAR_LENGHT) : (8*_NUMB_OF_LED_MATRICES)+1;
     }
     print(text, start_from, false, true, del, left_to_right);
 }
@@ -163,10 +172,10 @@ void simpleMatrix::scrollTextLeftToRight(const char *text, int del, int start_fr
 }
 
 void simpleMatrix::print(const char *text, int start_from, bool is_text_progmem, bool scroll_text, int del, bool left_to_right){
-    uint8_t display[8*SIMPLEMATRIX_NUMBER_OF_MODULES];     // Internal display buffer
+    uint8_t display[8*_NUMB_OF_LED_MATRICES];     // Internal display buffer
     int text_lenght = strlen(text);                        // The lenght of the string
     int text_arr_lenght = text_lenght*FONT_CHAR_LENGHT;          // The column lenght of the text 
-    for(int i=0;i<8*SIMPLEMATRIX_NUMBER_OF_MODULES;i++){display[i] = 0x00;} //Sets *display to 0
+    for(int i=0;i<8*_NUMB_OF_LED_MATRICES;i++){display[i] = 0x00;} //Sets *display to 0
     
     int start_letter_on_matrix;         // Where does the text start on the display
     int end_letter_on_matrix;           // Where does the text end on the display
@@ -186,7 +195,7 @@ void simpleMatrix::print(const char *text, int start_from, bool is_text_progmem,
             missed_text_cols = i;
         }
         
-        if(start_from+i >= 8*SIMPLEMATRIX_NUMBER_OF_MODULES || i >= text_arr_lenght){
+        if(start_from+i >= 8*_NUMB_OF_LED_MATRICES || i >= text_arr_lenght){
             end_letter_on_matrix = i+start_from-1;
             text_cols_to_send = i-1;
             break;
@@ -221,17 +230,18 @@ void simpleMatrix::print(const char *text, int start_from, bool is_text_progmem,
 
 // Function to scroll a buffer of any size
 void simpleMatrix::scrollBuffer(uint8_t *mat, int del, int column, int start_from){
+    if(start_from==(int)0x8000){start_from=(_NUMB_OF_LED_MATRICES*8)+1;}
     sendColumnBuffer(mat, column, start_from, true, del);
 }
 
 // General function to send over a column-arrayed buffer. Can be scrolled or not, depending in preference
 void simpleMatrix::sendColumnBuffer(uint8_t *mat, int column, int start_from, bool scroll, int del){
-    uint8_t display[(SIMPLEMATRIX_NUMBER_OF_MODULES+1)*8]; // Create buffer w/ 1 "immaginary" column + number of columns in matrix
-    for(int i=0;i<(SIMPLEMATRIX_NUMBER_OF_MODULES+1)*8;i++){display[i] = 0x00;} // Sets *display to all 0's to start with
-        for(int i=0;i<SIMPLEMATRIX_NUMBER_OF_MODULES*8;i++){display[i] = _matrix_col[i];} // Sets *display to copy of current display
+    uint8_t display[(_NUMB_OF_LED_MATRICES+1)*8]; // Create buffer w/ 1 "immaginary" column + number of columns in matrix
+    for(int i=0;i<(_NUMB_OF_LED_MATRICES+1)*8;i++){display[i] = 0x00;} // Sets *display to all 0's to start with
+        for(int i=0;i<_NUMB_OF_LED_MATRICES*8;i++){display[i] = _matrix_col[i];} // Sets *display to copy of current display
 
     int column_send = 0;
-    for(int i=start_from;i<=(SIMPLEMATRIX_NUMBER_OF_MODULES*8)+1;i++){
+    for(int i=start_from;i<=(_NUMB_OF_LED_MATRICES*8)+1;i++){
         display[i] = mat[i-start_from]; 
         column_send++;
         if(column_send == column){break;}
@@ -240,14 +250,14 @@ void simpleMatrix::sendColumnBuffer(uint8_t *mat, int column, int start_from, bo
     if(scroll){
         while(1){
             delay(del);   // Delay by the inputed delay amount
-            for(int i=0;i<(SIMPLEMATRIX_NUMBER_OF_MODULES*8)+1;i++){display[i] = display[i+1];} // Scroll display
+            for(int i=0;i<(_NUMB_OF_LED_MATRICES*8)+1;i++){display[i] = display[i+1];} // Scroll display
             sendMatrixBuffer(display); // Send out *display buffer
             // If the number of column sent is less than or equal to the number of columns in the array,
             // send the array data, else send 0
-            display[1+(SIMPLEMATRIX_NUMBER_OF_MODULES*8)] = (column_send <= (column-1)) ? mat[column_send] : 0x00;
+            display[1+(_NUMB_OF_LED_MATRICES*8)] = (column_send <= (column-1)) ? mat[column_send] : 0x00;
             // If the number of column sent is greater than the number of column in the array + the column size
             // of the matrix, exit the while loop as it has scrolled thru the array and scrolled it out of frame
-            if(column_send > column+(SIMPLEMATRIX_NUMBER_OF_MODULES*8)){
+            if(column_send > column+(_NUMB_OF_LED_MATRICES*8)){
                 break;  // Break out of the while loop
             }
             column_send++;  // Increment the number of columns sent
@@ -265,7 +275,7 @@ void simpleMatrix::scroll_text_left_to_right(const char  *text, int del, bool is
     while(missed_text_cols > (int)strlen(text)*FONT_CHAR_LENGHT){missed_text_cols--;}
     while(start_letter_on_matrix < 0){start_letter_on_matrix++;}
     while(1){
-        for(int i=(SIMPLEMATRIX_NUMBER_OF_MODULES*8)-1;i>0;i--){display[i] = display[i-1];} //Scrolls the display
+        for(int i=(_NUMB_OF_LED_MATRICES*8)-1;i>0;i--){display[i] = display[i-1];} //Scrolls the display
         if(missed_text_cols > 0){
             missed_text_cols--;
             if((missed_text_cols%FONT_CHAR_LENGHT)>=5){ //If the remainder of i%FONT_CHAR_LENGHT is more then 5(font size), send 0's
@@ -285,7 +295,7 @@ void simpleMatrix::scroll_text_left_to_right(const char  *text, int del, bool is
             start_letter_on_matrix++;
         }
         
-        if(start_letter_on_matrix > (SIMPLEMATRIX_NUMBER_OF_MODULES*8)){
+        if(start_letter_on_matrix > (_NUMB_OF_LED_MATRICES*8)){
             break;
         }
         
@@ -297,8 +307,8 @@ void simpleMatrix::scroll_text_left_to_right(const char  *text, int del, bool is
 void simpleMatrix::scroll_text_right_to_left(const char  *text, int del, bool is_text_progmem, int text_cols_to_send, int end_letter_on_matrix, uint8_t *display, int text_arr_lenght){
     delay(del);
     while(1){
-        if(end_letter_on_matrix >= SIMPLEMATRIX_NUMBER_OF_MODULES*8){delay(del); end_letter_on_matrix--; continue;}
-        for(int i=0;i<(SIMPLEMATRIX_NUMBER_OF_MODULES*8)-1;i++){display[i] = display[i+1];} //Scrolls the display
+        if(end_letter_on_matrix >= _NUMB_OF_LED_MATRICES*8){delay(del); end_letter_on_matrix--; continue;}
+        for(int i=0;i<(_NUMB_OF_LED_MATRICES*8)-1;i++){display[i] = display[i+1];} //Scrolls the display
         if(text_cols_to_send < text_arr_lenght-1){
             text_cols_to_send++;
             if((text_cols_to_send%FONT_CHAR_LENGHT)>=5){ //If the remainder of i%FONT_CHAR_LENGHT is more then 5(font size), send 0's

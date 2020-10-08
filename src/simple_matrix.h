@@ -10,6 +10,7 @@
  * <a href="https://github.com/Electro707/Simple-LED-Matrix-Library">Link to the library's Github repository</a>
  *
  * To check out the old documentation page, click <a href="https://electro707.com/documentation/Libraries/simple_led_library_old_docs/index.php">Here!</a>
+ * \warning The above old docs page is invalid since v1.4 of this library due to significant function changes.
  *
  * \section Installation
  * To install the library, the prefered method is by using the Arduino's Library Manager. Simply looking for <em>simple led matrix</em> 
@@ -23,17 +24,6 @@
 #include <SPI.h>
 #include <avr/pgmspace.h>
 
-/**
- * \brief A define that determines the number of 8x8 LED modules.
- * By default 4 LED matrices will be used. \n
- * Must define this before #include<simple_matrix.h> is called.
- * The reason this is in the pre-processor instead of a variabled fed into the simpleMatrix constructor 
- * is to allow for default arguments into functions like clearDisplay.
- */
-#ifndef SIMPLEMATRIX_NUMBER_OF_MODULES
-#define SIMPLEMATRIX_NUMBER_OF_MODULES 12
-#endif
-
 #define FONT_CHAR_LENGHT 6
 
 class simpleMatrix{
@@ -43,8 +33,9 @@ class simpleMatrix{
          * \param pin The Arduino pin in which the CS line from the matrix is connected to.
          * \param rotateIndividualDislay Whether to rotate each individual display while sending data. 
                                          Useful as some display are 'inverted' in their LED matrix orientation.
+         * \param numb_modules The number of modules. Defaults to 4 8x8 LED matrices
          */
-        simpleMatrix(int pin, bool rotateIndividualDislay = false);
+        simpleMatrix(int pin, bool rotateIndividualDislay = false, unsigned int numb_modules=4);
 
         /**
          * \brief Begins the library and initializes the display.
@@ -57,7 +48,7 @@ class simpleMatrix{
          * \param from Which LED matrix to start clearing from.
          * \param to Which LED matrix to clear up to.
          */
-        void clearDisplay(int from=0, int to=(SIMPLEMATRIX_NUMBER_OF_MODULES-1));
+        void clearDisplay(int from=0, int to=0x8000);
 
         /**
          * \brief Fills the display.
@@ -65,7 +56,7 @@ class simpleMatrix{
          * \param from Which LED matrix to start filling from.
          * \param to Which LED matrix to fill up to.
          */
-        void fillDisplay(int from=0, int to=(SIMPLEMATRIX_NUMBER_OF_MODULES-1));
+        void fillDisplay(int from=0, int to=0x8000);
         
         
         /**
@@ -157,7 +148,7 @@ class simpleMatrix{
          * \param column The number of columns to be sent out (in most cases this would be the same as the size of the *mat array).
          * \param start_from Where the buffer will start at in the display.
          */
-        void scrollBuffer(uint8_t *mat, int del, int column, int start_from=(SIMPLEMATRIX_NUMBER_OF_MODULES*8)+1);
+        void scrollBuffer(uint8_t *mat, int del, int column, int start_from=0x8000);
 
         /**
          * \brief General function to send over a column-arrayed buffer. Can be scrolled or not, depending in preference.
@@ -178,12 +169,12 @@ class simpleMatrix{
          */
         void sendMatrixBuffer(uint8_t *mat, int start_from=0);
     private:
-        // Internal 2D array that is addressed by row and by the LED matrix number that is used to update the displays
-        uint8_t _matrix[SIMPLEMATRIX_NUMBER_OF_MODULES+1][8];
-         // A copy of a column_addressed matrix. Used as memory for when new stuff is scrolled unto the display.
-        uint8_t _matrix_col[(SIMPLEMATRIX_NUMBER_OF_MODULES)*8];  
-        bool _ROTATE_INDIV_DISPLAY;
-        int _DL_PIN;
+        uint8_t *_matrix;                   // The display and row addressed array containing data to be sent to the displays
+        uint8_t *_matrix_col;               // A column-addressed array containing the previous data. Used for memory
+        bool _ROTATE_INDIV_DISPLAY;         // If the displays are individually rotated by 180
+        unsigned int _DL_PIN;               // The CS pin of the LED matrix
+        int _NUMB_OF_LED_MATRICES;          // The number of LED matrix modules
+        
         //Sends the _matrix buffer to the displays
         void senddisplay(); 
         // Internal function to send a command and data to all matrices.

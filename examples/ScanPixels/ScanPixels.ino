@@ -2,17 +2,21 @@
 
 #define DELAY 10 //Sets the delay between each frame in mS
 #define NUMBER_OF_DISPLAYS 4 //Sets the number of display (4 for this example)
-uint8_t matrix_b[NUMBER_OF_DISPLAYS*8]; //Column-adressed display
+uint8_t matrix_b[NUMBER_OF_DISPLAYS*8]; //Column-adressed array to store what's on the display
 
 /*
 Initialize the library. The 4 means that the CS pin is connected to pin D4.
 You can change this to whatever you want, just make sure to connect the CS
 pin to the pin number.
+
 The disp means that any future function calls to the library uses "disp" as the
 library's object name. For example, the library has a function called
 "setIntensity", you need to write "disp.setIntensity" to call that function.
+
+If you notice that the display is upside-down per display, change 
+simpleMatrix disp(4, false, NUMBER_OF_DISPLAYS); to simpleMatrix disp(4, true, NUMBER_OF_DISPLAYS);
 */
-simpleMatrix disp(4);
+simpleMatrix disp(4, false, NUMBER_OF_DISPLAYS);
 
 //This code will run only once when the Arduino is turned on.
 void setup(){

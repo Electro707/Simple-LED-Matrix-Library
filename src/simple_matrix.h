@@ -120,12 +120,11 @@ class simpleMatrix{
          * \brief Sends some text to the display, with the option to have it scroll.
          * \param *text The string that you want to send (must be a char array).
          * \param start_from The position where the text will start in the display.
-         * \param is_text_progmem Whether the text is stored in Flash or RAM.
-         * \param scroll_text Whether the outputed display will be scrolled from right to left.
          * \param del The delay between each frame while scrolling.
          * \param left_to_right false for the text to be scrolled from left to right, true to be scrolled from right to left.
+         * \param is_text_progmem Whether the text is stored in Flash or RAM.
          */
-        void print(const char *text, int start_from=0, bool is_text_progmem=false, bool scroll_text=false, int del=0, bool left_to_right=false);
+        void print(const char *text, int start_from=0, int del=0, bool left_to_right=false, bool is_text_progmem=false);
         
         /**
          * \brief Set the intensity of the LED matrix.

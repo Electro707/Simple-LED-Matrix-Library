@@ -140,7 +140,11 @@ void simpleMatrix::scrollTextPROGMEM(const char *text, int del, bool left_to_rig
     if(start_from == (int)0x8000){
         start_from = left_to_right ? -(strlen(text)*FONT_CHAR_LENGHT) : (8*_NUMB_OF_LED_MATRICES)+1;
     }
-    print(text, start_from, true, true, del, left_to_right);
+    // Exit if the delay is 0, as that's the point of this function
+    if(del == 0){
+        return;
+    }
+    print(text, start_from, del, left_to_right, true);
 }
 // Wrapper for scrollTextPROGMEM for simple usage
 void simpleMatrix::scrollTextPROGMEMRightToLeft(const char *text, int del, int start_from){
@@ -158,7 +162,11 @@ void simpleMatrix::scrollText(const char *text, int del, bool left_to_right, int
     if(start_from == (int)0x8000){
         start_from = left_to_right ? -(strlen(text)*FONT_CHAR_LENGHT) : (8*_NUMB_OF_LED_MATRICES)+1;
     }
-    print(text, start_from, false, true, del, left_to_right);
+    // Exit if the delay is 0, as that's the point of this function
+    if(del == 0){
+        return;
+    }
+    print(text, start_from, del, left_to_right, false);
 }
 
 // Wrapper for scrollText for simple usage
@@ -171,7 +179,7 @@ void simpleMatrix::scrollTextLeftToRight(const char *text, int del, int start_fr
     scrollText(text, del, true, start_from);
 }
 
-void simpleMatrix::print(const char *text, int start_from, bool is_text_progmem, bool scroll_text, int del, bool left_to_right){
+void simpleMatrix::print(const char *text, int start_from, int del, bool left_to_right, bool is_text_progmem){
     uint8_t display[8*_NUMB_OF_LED_MATRICES];     // Internal display buffer
     int text_lenght = strlen(text);                        // The lenght of the string
     int text_arr_lenght = text_lenght*FONT_CHAR_LENGHT;          // The column lenght of the text 
@@ -179,7 +187,7 @@ void simpleMatrix::print(const char *text, int start_from, bool is_text_progmem,
     
     int start_letter_on_matrix;         // Where does the text start on the display
     int end_letter_on_matrix;           // Where does the text end on the display
-    int missed_text_cols = 0;               // The number of columns from the text that was missed (to fill the display when scrolling)
+    int missed_text_cols = 0;           // The number of columns from the text that was missed (to fill the display when scrolling)
     int text_cols_to_send;              // The number of columns from the text that still needs to be sent
     
     int i=-1;
@@ -216,7 +224,7 @@ void simpleMatrix::print(const char *text, int start_from, bool is_text_progmem,
     }
     sendMatrixBuffer(display); //Send out the display
     // If the option for scrolling is there, do so depending if it's left to right or right to left
-    if(scroll_text){
+    if(del != 0){
         if(left_to_right){
             scroll_text_left_to_right(text, del, is_text_progmem, missed_text_cols, start_letter_on_matrix, display);
         }

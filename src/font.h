@@ -1,3 +1,6 @@
+// Don't know where the source of this is, probably some
+// Adafruit library.
+// TODO: Find original creator of this font array and give credit.
 const unsigned char font[][5] = {
 {0x00,0x00,0x00,0x00,0x00}, //   0x20 32
 {0x00,0x00,0xf6,0x00,0x00},

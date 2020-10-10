@@ -3,6 +3,7 @@
 #define TRAIN_DELAY 8
 #define TEXT_DELAY 20
 
+// The column lenght of the TRAIIIINNNNNNN array.
 uint8_t column_lenght = 232;
 /*
  * This array is the train. Generated with a Python software that will have a future release.
@@ -243,13 +244,17 @@ uint8_t TRAIIIINNNNNNN[] = {
 };
 
 /*
- * Initialize the library. The 4 means that the CS pin is connected to pin D4.
- * You can change this to whatever you want, just make sure to connect the CS
- * pin to the pin number.
- * The disp means that any future function calls to the library uses "disp" as the
- * library's object name. For example, the library has a function called
- * "setIntensity", you need to write "disp.setIntensity" to call that function.
- */
+Initialize the library. The 4 means that the CS pin is connected to pin D4.
+You can change this to whatever you want, just make sure to connect the CS
+pin to the pin number.
+
+The disp means that any future function calls to the library uses "disp" as the
+library's object name. For example, the library has a function called
+"setIntensity", you need to write "disp.setIntensity" to call that function.
+
+If you notice that the display is upside-down per display, change 
+simpleMatrix disp(4); to simpleMatrix disp(4, true);
+*/
 simpleMatrix disp(4);
 
 // This code will run only once when the Arduino is turned on.

@@ -4,17 +4,32 @@
  *
  * \todo Create more examples.
  * \todo Publish pictures.
- * \todo Have scrolling be able to be done from left to right.
+ * \todo Have buffer scrolling be able to be done from left to right.
  * \todo Add full support for the MAX7221 chipset.
- *
+ * 
+ * \section Installation Installation 
+ * To install the library, the prefered method is by using the Arduino's Library Manager. Simply looking for <em>simple led matrix</em> 
+ * should bring up this library. THe other way to install this library is to install it as a ZIP library downloaded from the Github repository.
+ * 
+ * \section Wiring Wiring 
+ * On the hardware side, wire the Arduino to the LED matrix in the following fashion
+ * <table>
+ * <caption>Wiring Table</caption>
+ * <tr><th>Arduino Pinout<th>LED Matrix Pinout
+    <tr><td>VCC<td>VCC
+    <tr><td>GND<td>GND
+    <tr><td>D11 (Fixed)<td>DIN
+    <tr><td>D13 (Fixed)<td>CLK
+    <tr><td>D4 (Adjustable by software)<td>CS
+    </table>
+ * 
+ * \section GitHub GitHub Repo
  * <a href="https://github.com/Electro707/Simple-LED-Matrix-Library">Link to the library's Github repository</a>
  *
+ * \section ODocs Old Documentation
  * To check out the old documentation page, click <a href="https://electro707.com/documentation/Libraries/simple_led_library_old_docs/index.php">Here!</a>
  * \warning The above old docs page is invalid since v1.4 of this library due to significant function changes.
  *
- * \section Installation
- * To install the library, the prefered method is by using the Arduino's Library Manager. Simply looking for <em>simple led matrix</em> 
- * should bring up this library. THe other way to install this library is to install it as a ZIP library downloaded from the Github repository.
  */
 
 #ifndef SIMPLEMATRIX_H

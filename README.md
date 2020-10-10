@@ -34,7 +34,8 @@ You could either download a release candidate (thru Github's release/tag manager
 
 ## To-Do
 - Create more examples
-- Have scrolling be able to be done from left to right (WIP, available in latest release)
+- More internal documentation
+- Add ability to scroll a column-arrayed buffer from left to right
 
 ## Release
 
@@ -49,7 +50,3 @@ If you want to experiment with the lastest and greatest (and the buggiest), you 
 ## License
 
 See the [LICENSE](LICENSE) file for details
-
-## Notes
-
-* This project was originally design to be used for the University of New Haven's Makerspace's "Make-A-Sign" event, where people with no previous experience with Arduino or programming made a program which scrolled a text of their choice based on the demo file.

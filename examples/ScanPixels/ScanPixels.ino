@@ -2,7 +2,6 @@
 
 #define DELAY 10 //Sets the delay between each frame in mS
 #define NUMBER_OF_DISPLAYS 4 //Sets the number of display (4 for this example)
-uint8_t matrix_b[NUMBER_OF_DISPLAYS*8]; //Column-adressed array to store what's on the display
 
 /*
 Initialize the library. The 4 means that the CS pin is connected to pin D4.
@@ -31,32 +30,28 @@ void loop(){
   //This sets an LED ON sequentially per row.
   for(int i=0;i<8;i++){ //Repreat per row
     for(int k=0;k<(NUMBER_OF_DISPLAYS*8);k++){ //Repeat per column
-      matrix_b[k] |= (1<<i); //Sets a 1 to the i-th bit(row number) in the k(column number) element
-      disp.sendMatrixBuffer(matrix_b); //Send the matrix buffer
+      disp.setPixel(i, k);
       delay(DELAY); //Delay by DELAY mS
     }
   }
   //This sets an LED OFF sequentially per row.
   for(int i=0;i<8;i++){ //Repreat per row
     for(int k=0;k<(NUMBER_OF_DISPLAYS*8);k++){ //Repeat per column
-      matrix_b[k] &= ~(1<<i);  //Sets a 0 to the i-th bit(row number) in the k(column number) element
-      disp.sendMatrixBuffer(matrix_b); //Send the matrix buffer
+      disp.clearPixel(i, k);
       delay(DELAY);  //Delay by DELAY mS
     }
   }
   //This sets an LED ON sequentially per column.
   for(int i=0;i<(NUMBER_OF_DISPLAYS*8);i++){ //Repreat per column
     for(int k=0;k<8;k++){ //Repreat per row
-      matrix_b[i] |= (1<<k);  //Sets a 1 to the k-th bit(row number) in the i(column number) element
-      disp.sendMatrixBuffer(matrix_b); //Send the matrix buffer
+      disp.setPixel(k, i);
       delay(DELAY); //Delay by DELAY mS
     }
   }
   //This sets an LED OFF sequentially per column.
   for(int i=0;i<(NUMBER_OF_DISPLAYS*8);i++){ //Repreat per column
     for(int k=0;k<8;k++){ //Repreat per row
-      matrix_b[i] &= ~(1<<k); //Sets a 0 to the k-th bit(row number) in the i(column number) element
-      disp.sendMatrixBuffer(matrix_b); //Send the matrix buffer
+      disp.clearPixel(k, i);
       delay(DELAY); //Delay by DELAY mS
     }
   }

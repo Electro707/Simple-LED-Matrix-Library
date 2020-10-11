@@ -1,3 +1,8 @@
+v1.4.1
+    -Fixed a bug where the setPixel function didn't have a function definition
+    -Added a clearPixel function
+    -Improved interal programming (mainly for the sendMatrixBuffer function)
+    -Changed the ScanPixels example to use the clearPixel and setPixel functions
 v1.4
     -Added support for any size LED matrix
     -Added option for left-to-right and right-to-left text scrolling

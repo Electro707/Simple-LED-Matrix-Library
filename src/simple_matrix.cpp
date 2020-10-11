@@ -12,7 +12,7 @@ Originally designed for the University of New Haven's
     Author: Jamal Bouajjaj
 ********************************************************************************/
 // Macro to treat the 1D array _matrix as a 2D array
-#define _GET_MATRIX_LOC(_Y, _X) _matrix[(8*_Y)+_X]
+#define _GET_MATRIX_LOC(_MATRIX_NUMB, _ROW_NUMB) _matrix[(8*_MATRIX_NUMB)+_ROW_NUMB]
 
 /********************************************************************************
 Constructor
@@ -27,6 +27,8 @@ simpleMatrix::simpleMatrix(int pin, bool rotateIndividualDislay, unsigned int nu
     _matrix = new uint8_t[(_NUMB_OF_LED_MATRICES+1)*8];
     // A copy of a column_addressed matrix. Used as memory for when new stuff is scrolled unto the display.
     _matrix_col = new uint8_t[(_NUMB_OF_LED_MATRICES)*8];  
+    memset(_matrix, 0, (_NUMB_OF_LED_MATRICES+1)*8);
+    memset(_matrix_col, 0, (_NUMB_OF_LED_MATRICES)*8);
     pinMode(_DL_PIN,OUTPUT);
     digitalWrite(_DL_PIN,HIGH);
 }
@@ -36,11 +38,11 @@ Low Level Function
 //Sends a command to a single MS7219
 void simpleMatrix::sendCommandtoOne(uint8_t command, uint8_t data, uint8_t display){
     uint8_t d[_NUMB_OF_LED_MATRICES*2]; //Array that containts data to be sent
+    memset(d, 0, _NUMB_OF_LED_MATRICES*2); 
     d[2*display] = command;
     d[(2*display)+1] = data;
     digitalWrite(_DL_PIN,LOW);
     for(int k=0;k<_NUMB_OF_LED_MATRICES*2;k++){SPI.transfer(d[k]);} // Send data
-    for(int k=0;k<_NUMB_OF_LED_MATRICES*8;k++){_matrix_col[k] = 0; _GET_MATRIX_LOC(k/_NUMB_OF_LED_MATRICES, k%_NUMB_OF_LED_MATRICES) = 0;}
     digitalWrite(_DL_PIN,HIGH);
 }
 
@@ -63,7 +65,7 @@ void simpleMatrix::senddisplay(){
             SPI.transfer(r+1);
             SPI.transfer(_GET_MATRIX_LOC(i, r));
         }
-    digitalWrite(_DL_PIN,HIGH);
+        digitalWrite(_DL_PIN,HIGH);
     }
 }
 
@@ -85,10 +87,11 @@ High-Level functions
 
 //Converts a column-addressed buffer to a display-row-addressed buffer and sends it
 void simpleMatrix::sendMatrixBuffer(uint8_t *mat, int start_from){
-    for(int i=0;i<_NUMB_OF_LED_MATRICES;i++){
-        for(int k=0;k<8;k++){
-            _matrix_col[k+(i*8)] = mat[k+(i*8)+start_from];
-            _GET_MATRIX_LOC(i, k) = mat[k+(i*8)+start_from]; //Copy *mat to *_matrix with it split up
+    if(mat != NULL){
+        for(int i=0;i<_NUMB_OF_LED_MATRICES;i++){
+            for(int k=0;k<8;k++){
+                _matrix_col[k+(i*8)] = mat[k+(i*8)+start_from];
+            }
         }
     }
     //Function to transpose display (Thanks Spencer Hopwood!)
@@ -101,9 +104,9 @@ void simpleMatrix::sendMatrixBuffer(uint8_t *mat, int start_from){
                 // To combat this, there is a flag which will decide whether or not to rotate
                 // each matrix's buffer by 180degrees
                 if(_ROTATE_INDIV_DISPLAY){
-                    temp[7-i] |= ((_GET_MATRIX_LOC(d, k) & bitmask_v) >> (i)) << (7-k); 
+                    temp[7-i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (7-k); 
                 }else{
-                    temp[i] |= ((_GET_MATRIX_LOC(d, k) & bitmask_v) >> (i)) << (k);
+                    temp[i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (k);
                 }
             }
         }
@@ -114,8 +117,11 @@ void simpleMatrix::sendMatrixBuffer(uint8_t *mat, int start_from){
 
 //Fills the display. Can fill all or some displays
 void simpleMatrix::fillDisplay(int from, int to){
-    if(to==(int)0x8000){to=_NUMB_OF_LED_MATRICES-1;}
-    for(int i=from;i<(to+1);i++){
+    if(to==(int)0x8000){to=_NUMB_OF_LED_MATRICES;}      // If to is default, set to end of matrix
+    memset(_matrix_col+(from*8), 0xFF, (to-from)*8);    // Set the internal column-addressed column to said value
+    // Due to the easiness of this operation, manually update the row/display addressed array and send it
+    //      instead of using the sendMatrixBuffer function
+    for(int i=from;i<to;i++){
         for(int k=0;k<8;k++){
             _GET_MATRIX_LOC(i, k) = 0xFF;
         }
@@ -125,13 +131,26 @@ void simpleMatrix::fillDisplay(int from, int to){
 
 //Clears the displays. Can clear all or some displays
 void simpleMatrix::clearDisplay(int from, int to){
-    if(to==(int)0x8000){to=_NUMB_OF_LED_MATRICES-1;}
-    for(int d=from;d<(to+1);d++){
+    if(to==(int)0x8000){to=_NUMB_OF_LED_MATRICES;}      // If to is default, set to end of matrix
+    memset(_matrix_col+(from*8), 0, (to-from)*8);       // Set the internal column-addressed column to said value
+    // Due to the easiness of this operation, manually update the row/display addressed array and send it
+    //      instead of using the sendMatrixBuffer function
+    for(int d=from;d<to;d++){ 
         for(int i=0;i<8;i++){
             _GET_MATRIX_LOC(d, i) = 0x00;
         }
     }
     senddisplay();
+}
+
+void simpleMatrix::setPixel(int x, int y){
+    _matrix_col[y] |= (1<<x);
+    sendMatrixBuffer();
+}
+
+void simpleMatrix::clearPixel(int x, int y){
+    _matrix_col[y] &= ~(1<<x);
+    sendMatrixBuffer();
 }
 
 //Sends and scrolls a text from right to left which is stored in Flash memory

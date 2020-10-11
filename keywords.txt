@@ -24,6 +24,7 @@ scrollTextPROGMEMRightToLeft	KEYWORD2
 print							KEYWORD2
 setIntensity					KEYWORD2
 setPixel						KEYWORD2
+clearPixel						KEYWORD2
 sendColumnBuffer				KEYWORD2
 scrollBuffer					KEYWORD2
 sendMatrixBuffer				KEYWORD2

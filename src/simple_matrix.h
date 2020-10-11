@@ -73,7 +73,6 @@ class simpleMatrix{
          */
         void fillDisplay(int from=0, int to=0x8000);
         
-        
         /**
          * \brief Scrolls a text left or right
          * \param del The delay between each frame while scrolling.
@@ -148,11 +147,16 @@ class simpleMatrix{
         void setIntensity(int intensity);
         
         /**
-         * \brief Sets a single pixel in the 4 8x8 LED matrices to either on or off.
-         * \param x,y The coordinates of the pixel to be sent/cleared.
-         * \param value true or false depending on whether you want the pixel to be turned off or on.
+         * \brief Sets a single pixel in the LED matrices.
+         * \param x,y The coordinates of the pixel to be set.
          */
-        void setPixel(int x, int y, int value);
+        void setPixel(int x, int y);
+        
+        /**
+         * \brief Clears a single pixel in the LED matrices.
+         * \param x,y The coordinates of the pixel to be cleared.
+         */
+        void clearPixel(int x, int y);
         
         /**
          * \brief A wrapper function for the sendColumnBuffer() function.
@@ -181,7 +185,7 @@ class simpleMatrix{
          * \param *mat A column-addressed array that contains the bytes (*mat must be an array of uint8_t type) of size that is equal to the number of columns in your buffer (For a 4 matrix display, there will be 32 columns)
          * \param start_from The offset in the *mat where the function will start accessing.
          */
-        void sendMatrixBuffer(uint8_t *mat, int start_from=0);
+        void sendMatrixBuffer(uint8_t *mat=NULL, int start_from=0);
     private:
         uint8_t *_matrix;                   // The display and row addressed array containing data to be sent to the displays
         uint8_t *_matrix_col;               // A column-addressed array containing the previous data. Used for memory

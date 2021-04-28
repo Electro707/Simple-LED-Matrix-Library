@@ -50,7 +50,7 @@ class simpleMatrix{
                                          Useful as some display are 'inverted' in their LED matrix orientation.
          * \param numb_modules The number of modules. Defaults to 4 8x8 LED matrices
          */
-        simpleMatrix(int pin, bool rotateIndividualDislay = false, unsigned int numb_modules=4);
+        simpleMatrix(int pin, bool rotateIndividualDislay = false, unsigned int numb_modules=4, bool flip_zero = false);
 
         /**
          * \brief Begins the library and initializes the display.
@@ -192,6 +192,7 @@ class simpleMatrix{
         bool _ROTATE_INDIV_DISPLAY;         // If the displays are individually rotated by 180
         unsigned int _DL_PIN;               // The CS pin of the LED matrix
         int _NUMB_OF_LED_MATRICES;          // The number of LED matrix modules
+        bool _FLIP_ZERO_TO_SIDE;
         
         //Sends the _matrix buffer to the displays
         void senddisplay(); 

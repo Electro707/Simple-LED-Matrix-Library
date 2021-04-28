@@ -19,10 +19,11 @@ Constructor
 ********************************************************************************/
 //The library's constructor. Sets the internal _DL_PIN value to pin and
 //sends the pin as an OUTPUT and turns it HIGH
-simpleMatrix::simpleMatrix(int pin, bool rotateIndividualDislay, unsigned int numb_modules){
+simpleMatrix::simpleMatrix(int pin, bool rotateIndividualDislay, unsigned int numb_modules, bool zero_zero){
     _DL_PIN = pin;
     _ROTATE_INDIV_DISPLAY = rotateIndividualDislay;
     _NUMB_OF_LED_MATRICES = numb_modules;
+    _FLIP_ZERO_TO_SIDE = zero_zero;
     // Internal 2D array that is addressed by row and by the LED matrix number that is used to update the displays
     _matrix = new uint8_t[(_NUMB_OF_LED_MATRICES+1)*8];
     // A copy of a column_addressed matrix. Used as memory for when new stuff is scrolled unto the display.
@@ -104,7 +105,11 @@ void simpleMatrix::sendMatrixBuffer(uint8_t *mat, int start_from){
                 // To combat this, there is a flag which will decide whether or not to rotate
                 // each matrix's buffer by 180degrees
                 if(_ROTATE_INDIV_DISPLAY){
-                    temp[7-i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (7-k); 
+                    if(_FLIP_ZERO_TO_SIDE){
+                      temp[i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (7-k); 
+                    } else {
+                      temp[7-i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (7-k); 
+                    }
                 }else{
                     temp[i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (k);
                 }

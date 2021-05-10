@@ -157,6 +157,10 @@ class simpleMatrix{
          * \param x,y The coordinates of the pixel to be cleared.
          */
         void clearPixel(int x, int y);
+
+        void setRowPixel(int x0, int x1, int y);
+
+        void clearRowPixel(int x0, int x1, int y);
         
         /**
          * \brief A wrapper function for the sendColumnBuffer() function.

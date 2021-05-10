@@ -62,7 +62,7 @@ void simpleMatrix::sendCommandtoAll(uint8_t command, uint8_t data){
 void simpleMatrix::senddisplay(){
     for(int r=0;r<8;r++){ //8 rows
         digitalWrite(_DL_PIN,LOW);
-        for(int i=0;i<_NUMB_OF_LED_MATRICES;i++){
+        for(int i=_NUMB_OF_LED_MATRICES-1;i>=0;i--){
             SPI.transfer(r+1);
             SPI.transfer(_GET_MATRIX_LOC(i, r));
         }
@@ -111,7 +111,11 @@ void simpleMatrix::sendMatrixBuffer(uint8_t *mat, int start_from){
                       temp[7-i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (7-k); 
                     }
                 }else{
-                    temp[i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (k);
+                    if(_FLIP_ZERO_TO_SIDE){
+                        temp[7-i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (k);
+                    } else {
+                        temp[i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (k);
+                    }
                 }
             }
         }
@@ -155,6 +159,20 @@ void simpleMatrix::setPixel(int x, int y){
 
 void simpleMatrix::clearPixel(int x, int y){
     _matrix_col[y] &= ~(1<<x);
+    sendMatrixBuffer();
+}
+
+void simpleMatrix::setRowPixel(int x0, int x1, int y){
+    for(int x=x0; x<=x1; x++){
+        _matrix_col[y] |= (1<<x);
+    }
+    sendMatrixBuffer();
+}
+
+void simpleMatrix::clearRowPixel(int x0, int x1, int y){
+    for(int x=x0; x<=x1; x++){
+        _matrix_col[y] &= ~(1<<x);
+    }
     sendMatrixBuffer();
 }
 

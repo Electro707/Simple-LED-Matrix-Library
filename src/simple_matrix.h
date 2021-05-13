@@ -50,12 +50,33 @@ class simpleMatrix{
                                          Useful as some display are 'inverted' in their LED matrix orientation.
          * \param numb_modules The number of modules. Defaults to 4 8x8 LED matrices
          */
-        simpleMatrix(int pin, bool rotateIndividualDislay = false, unsigned int numb_modules=4, bool flip_zero = false);
+        simpleMatrix(int pin, unsigned int numb_modules=4);
 
         /**
          * \brief Begins the library and initializes the display.
          */
         void begin();
+        
+        /**
+         * \brief Function to invert each individual display 180 degrees.
+         * 
+         * The motive behind this is that some LED matrices have their LED matrix wired 180 degrees from other
+         * (we are talking about hung-low modules, so consistency isn't necessarily something I would nessesary expect),
+         * so this function is the fix for that.
+         * 
+         * \param rotate Whether to rotate the displays or not. By default set to true/
+         */
+        void invertIndividualDisplays(bool rotate = true);
+        
+        /**
+         * \brief Function to set the display in vertical mode
+         * 
+         * This will mainly effect where (0,0) starts, as this command will adjust that to (0,0) of a vertical display (so
+         * upper left corner if the displays are layed out horizontally)
+         * 
+         * \param is_vertical Whether the LED matrix is setup vertically. By default set to true.
+         */
+        void verticalDisplays(bool is_vertical = true);
 
         /**
          * \brief Clears the display.

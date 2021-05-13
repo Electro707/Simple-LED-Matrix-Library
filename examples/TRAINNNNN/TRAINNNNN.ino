@@ -251,9 +251,6 @@ pin to the pin number.
 The disp means that any future function calls to the library uses "disp" as the
 library's object name. For example, the library has a function called
 "setIntensity", you need to write "disp.setIntensity" to call that function.
-
-If you notice that the display is upside-down per display, change 
-simpleMatrix disp(4); to simpleMatrix disp(4, true);
 */
 simpleMatrix disp(4);
 
@@ -261,6 +258,11 @@ simpleMatrix disp(4);
 void setup(){
   // Starts the library
   disp.begin();
+  /*
+   * If you notice that the display is upside-down per display, uncomment the following line
+   */
+  //disp.invertIndividualDisplays();
+  
   // Set the LED's intensity. This value can be anywhere between 0 and 15.
   disp.setIntensity(0x02);
 }

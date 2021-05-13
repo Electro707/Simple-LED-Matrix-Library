@@ -11,16 +11,18 @@ pin to the pin number.
 The disp means that any future function calls to the library uses "disp" as the
 library's object name. For example, the library has a function called
 "setIntensity", you need to write "disp.setIntensity" to call that function.
-
-If you notice that the display is upside-down per display, change 
-simpleMatrix disp(4, false, NUMBER_OF_DISPLAYS); to simpleMatrix disp(4, true, NUMBER_OF_DISPLAYS);
 */
-simpleMatrix disp(4, false, NUMBER_OF_DISPLAYS);
+simpleMatrix disp(4, NUMBER_OF_DISPLAYS);
 
 //This code will run only once when the Arduino is turned on.
 void setup(){
   //Starts the library
   disp.begin();
+  /*
+   * If you notice that the display is upside-down per display, uncomment the following line
+   */
+  //disp.invertIndividualDisplays();
+  
   //Set the LED's intensity. This value can be anywhere between 0 and 15.
   disp.setIntensity(0x02);
 }
@@ -28,30 +30,30 @@ void setup(){
 //After void setup(), this code will run and loop forever.
 void loop(){
   //This sets an LED ON sequentially per row.
-  for(int i=0;i<8;i++){ //Repreat per row
-    for(int k=0;k<(NUMBER_OF_DISPLAYS*8);k++){ //Repeat per column
-      disp.setPixel(i, k);
+  for(int y=0;y<8;y++){ //Repreat per row
+    for(int x=0;x<(NUMBER_OF_DISPLAYS*8);x++){ //Repeat per column
+      disp.setPixel(x, y);
       delay(DELAY); //Delay by DELAY mS
     }
   }
   //This sets an LED OFF sequentially per row.
-  for(int i=0;i<8;i++){ //Repreat per row
-    for(int k=0;k<(NUMBER_OF_DISPLAYS*8);k++){ //Repeat per column
-      disp.clearPixel(i, k);
+  for(int y=0;y<8;y++){ //Repreat per row
+    for(int x=0;x<(NUMBER_OF_DISPLAYS*8);x++){ //Repeat per column
+      disp.clearPixel(x, y);
       delay(DELAY);  //Delay by DELAY mS
     }
   }
   //This sets an LED ON sequentially per column.
-  for(int i=0;i<(NUMBER_OF_DISPLAYS*8);i++){ //Repreat per column
-    for(int k=0;k<8;k++){ //Repreat per row
-      disp.setPixel(k, i);
+  for(int x=0;x<(NUMBER_OF_DISPLAYS*8);x++){ //Repreat per column
+    for(int y=0;y<8;y++){ //Repreat per row
+      disp.setPixel(x, y);
       delay(DELAY); //Delay by DELAY mS
     }
   }
   //This sets an LED OFF sequentially per column.
-  for(int i=0;i<(NUMBER_OF_DISPLAYS*8);i++){ //Repreat per column
-    for(int k=0;k<8;k++){ //Repreat per row
-      disp.clearPixel(k, i);
+  for(int x=0;x<(NUMBER_OF_DISPLAYS*8);x++){ //Repreat per column
+    for(int y=0;y<8;y++){ //Repreat per row
+      disp.clearPixel(x, y);
       delay(DELAY); //Delay by DELAY mS
     }
   }

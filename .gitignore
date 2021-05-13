@@ -1,2 +1,5 @@
 extra/doxygen_out
 examples/*/build
+
+# Arduino's .developmement file
+.development

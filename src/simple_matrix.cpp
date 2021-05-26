@@ -160,25 +160,41 @@ void simpleMatrix::clearDisplay(int from, int to){
 }
 
 void simpleMatrix::setPixel(int x, int y){
-    _matrix_col[x] |= (1<<y);
+    if(_FLIP_ZERO_TO_SIDE){
+        _matrix_col[y] |= (1<<x);
+    } else {
+        _matrix_col[x] |= (1<<y);
+    }
     sendMatrixBuffer();
 }
 
 void simpleMatrix::clearPixel(int x, int y){
-    _matrix_col[x] &= ~(1<<y);
+    if(_FLIP_ZERO_TO_SIDE){
+        _matrix_col[y] &= ~(1<<x);
+    } else {
+        _matrix_col[x] &= ~(1<<y);
+    }
     sendMatrixBuffer();
 }
 
 void simpleMatrix::setRowPixel(int x0, int x1, int y){
     for(int x=x0; x<=x1; x++){
-        _matrix_col[y] |= (1<<x);
+        if(_FLIP_ZERO_TO_SIDE){
+            _matrix_col[y] |= (1<<x);
+        } else {
+            _matrix_col[x] |= (1<<y);
+        }
     }
     sendMatrixBuffer();
 }
 
 void simpleMatrix::clearRowPixel(int x0, int x1, int y){
     for(int x=x0; x<=x1; x++){
-        _matrix_col[y] &= ~(1<<x);
+        if(_FLIP_ZERO_TO_SIDE){
+            _matrix_col[y] &= ~(1<<x);
+        } else {
+            _matrix_col[x] &= ~(1<<y);
+        }
     }
     sendMatrixBuffer();
 }

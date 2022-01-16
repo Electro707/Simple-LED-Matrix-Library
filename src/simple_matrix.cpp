@@ -38,7 +38,7 @@ void simpleMatrix::invertIndividualDisplays(bool rotate){
   _ROTATE_INDIV_DISPLAY = rotate;
 }
 void simpleMatrix::verticalDisplays(bool is_vertical){
-  _FLIP_ZERO_TO_SIDE = is_vertical;
+  _IS_DISPLAY_VERTICAL = is_vertical;
 }
 /********************************************************************************
 Low Level Function
@@ -112,13 +112,13 @@ void simpleMatrix::sendMatrixBuffer(uint8_t *mat, int start_from){
                 // To combat this, there is a flag which will decide whether or not to rotate
                 // each matrix's buffer by 180degrees
                 if(_ROTATE_INDIV_DISPLAY){
-                    if(_FLIP_ZERO_TO_SIDE){
+                    if(_IS_DISPLAY_VERTICAL){
                       temp[i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (7-k); 
                     } else {
                       temp[7-i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (7-k); 
                     }
                 }else{
-                    if(_FLIP_ZERO_TO_SIDE){
+                    if(_IS_DISPLAY_VERTICAL){
                         temp[7-i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (k);
                     } else {
                         temp[i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (k);
@@ -160,7 +160,7 @@ void simpleMatrix::clearDisplay(int from, int to){
 }
 
 void simpleMatrix::setPixel(int x, int y){
-    if(_FLIP_ZERO_TO_SIDE){
+    if(_IS_DISPLAY_VERTICAL){
         _matrix_col[y] |= (1<<x);
     } else {
         _matrix_col[x] |= (1<<y);
@@ -169,7 +169,7 @@ void simpleMatrix::setPixel(int x, int y){
 }
 
 void simpleMatrix::clearPixel(int x, int y){
-    if(_FLIP_ZERO_TO_SIDE){
+    if(_IS_DISPLAY_VERTICAL){
         _matrix_col[y] &= ~(1<<x);
     } else {
         _matrix_col[x] &= ~(1<<y);
@@ -179,7 +179,7 @@ void simpleMatrix::clearPixel(int x, int y){
 
 void simpleMatrix::setRowPixel(int x0, int x1, int y){
     for(int x=x0; x<=x1; x++){
-        if(_FLIP_ZERO_TO_SIDE){
+        if(_IS_DISPLAY_VERTICAL){
             _matrix_col[y] |= (1<<x);
         } else {
             _matrix_col[x] |= (1<<y);
@@ -190,7 +190,7 @@ void simpleMatrix::setRowPixel(int x0, int x1, int y){
 
 void simpleMatrix::clearRowPixel(int x0, int x1, int y){
     for(int x=x0; x<=x1; x++){
-        if(_FLIP_ZERO_TO_SIDE){
+        if(_IS_DISPLAY_VERTICAL){
             _matrix_col[y] &= ~(1<<x);
         } else {
             _matrix_col[x] &= ~(1<<y);
@@ -248,6 +248,9 @@ void simpleMatrix::print(const char *text, int start_from, int del, bool left_to
     uint8_t display[8*_NUMB_OF_LED_MATRICES];     // Internal display buffer
     int text_lenght = strlen(text);                        // The lenght of the string
     int text_arr_lenght = text_lenght*FONT_CHAR_LENGHT;          // The column lenght of the text 
+    if(_IS_DISPLAY_VERTICAL){
+      text_arr_lenght = text_lenght*8; 
+    }    
     for(int i=0;i<8*_NUMB_OF_LED_MATRICES;i++){display[i] = 0x00;} //Sets *display to 0
     
     int start_letter_on_matrix;         // Where does the text start on the display
@@ -274,22 +277,39 @@ void simpleMatrix::print(const char *text, int start_from, int del, bool left_to
             break;
         }
         
-        if((i%FONT_CHAR_LENGHT)>=5){ //If the remainder of i%FONT_CHAR_LENGHT is more then 5(font size), send 0's
+        if((i%FONT_CHAR_LENGHT)>=5 && !_IS_DISPLAY_VERTICAL){ //If the remainder of i%FONT_CHAR_LENGHT is more then 5(font size), send 0's
             display[i+start_from] = 0x00;
-        }
+        } 
         else{ //Send out the font
             if(is_text_progmem){
-                display[i+start_from] = (font[ pgm_read_byte_near(text + (i/FONT_CHAR_LENGHT))-0x20 ][ i%FONT_CHAR_LENGHT ]);
+                if(_IS_DISPLAY_VERTICAL){
+                    display[i+start_from] = 0;
+                    for(int kk=0;kk<5;kk++){
+                        display[i+start_from] |= (((font[ pgm_read_byte_near(text + (i/8))-0x20][ kk ]) >> ((i+start_from) % 8) ) & 0b1) << kk;
+                    }
+                }
+                else{
+                    display[i+start_from] = (font[ pgm_read_byte_near(text + (i/FONT_CHAR_LENGHT))-0x20 ][ i%FONT_CHAR_LENGHT ]);
+                }
             }
             else{
-                display[i+start_from] = (font[ text[i/FONT_CHAR_LENGHT]-0x20][ i%FONT_CHAR_LENGHT ]);
+                if(_IS_DISPLAY_VERTICAL){
+                    display[i+start_from] = 0;
+                    for(int kk=0;kk<5;kk++){
+                        display[i+start_from] |= (((font[ text[i/8]-0x20][ kk ]) >> ((i+start_from) % 8) ) & 0b1) << kk;
+                    }
+                } 
+                else {
+                    display[i+start_from] = (font[ text[i/FONT_CHAR_LENGHT]-0x20][ i%FONT_CHAR_LENGHT ]);
+                }
             }
         }
         
     }
     sendMatrixBuffer(display); //Send out the display
     // If the option for scrolling is there, do so depending if it's left to right or right to left
-    if(del != 0){
+    // TODO: Add vertical text scrolling capability
+    if(del != 0 && !_IS_DISPLAY_VERTICAL){
         if(left_to_right){
             scroll_text_left_to_right(text, del, is_text_progmem, missed_text_cols, start_letter_on_matrix, display);
         }

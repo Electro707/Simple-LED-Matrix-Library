@@ -178,9 +178,21 @@ class simpleMatrix{
          * \param x,y The coordinates of the pixel to be cleared.
          */
         void clearPixel(int x, int y);
-
+        
+        /**
+         * \brief Sets a row of pixels
+         * \param x0 The start x position for the pixels to be set
+         * \param x1 The end x position for the pixels to be set
+         * \param y The y position of the pixels to be set
+         */
         void setRowPixel(int x0, int x1, int y);
-
+        
+        /**
+         * \brief Clears a row of pixels
+         * \param x0 The start x position for the pixels to be cleared
+         * \param x1 The end x position for the pixels to be cleared
+         * \param y The y position of the pixels to be cleared
+         */
         void clearRowPixel(int x0, int x1, int y);
         
         /**
@@ -217,7 +229,7 @@ class simpleMatrix{
         bool _ROTATE_INDIV_DISPLAY;         // If the displays are individually rotated by 180
         unsigned int _DL_PIN;               // The CS pin of the LED matrix
         int _NUMB_OF_LED_MATRICES;          // The number of LED matrix modules
-        bool _FLIP_ZERO_TO_SIDE;
+        bool _IS_DISPLAY_VERTICAL;          // Whether the display is vertical or not
         
         //Sends the _matrix buffer to the displays
         void senddisplay(); 

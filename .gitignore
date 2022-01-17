@@ -3,3 +3,7 @@ examples/*/build
 
 # Arduino's .developmement file
 .development
+
+# Things related to building the GIF images with the library in extra/build_gif
+*.o
+*.so

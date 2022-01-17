@@ -67,6 +67,9 @@ void simpleMatrix::sendCommandtoAll(uint8_t command, uint8_t data){
 //Updates all displays. The buffer that is displayed in the
 //	internal _matrix array
 void simpleMatrix::senddisplay(){
+#ifdef TEST_EXTERNAL
+    send_display_buffer();
+#endif
     for(int r=0;r<8;r++){ //8 rows
         digitalWrite(_DL_PIN,LOW);
         for(int i=_NUMB_OF_LED_MATRICES-1;i>=0;i--){
@@ -89,6 +92,14 @@ void simpleMatrix::begin(){
     clearDisplay(); //Clear display
     sendCommandtoAll(0x0C,0x01); //Exit shutdown mode
 }
+/********************************************************************************
+Debug function, used for generating images of the display for docs
+********************************************************************************/
+#ifdef TEST_EXTERNAL
+uint8_t *simpleMatrix::return_external_matrix(void){
+    return _matrix;
+}
+#endif
 /********************************************************************************
 High-Level functions
 ********************************************************************************/

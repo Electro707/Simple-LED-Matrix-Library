@@ -35,9 +35,15 @@
 #ifndef SIMPLEMATRIX_H
 #define SIMPLEMATRIX_H
 
+#ifndef TEST_EXTERNAL
 #include "Arduino.h"
 #include <SPI.h>
 #include <avr/pgmspace.h>
+#else
+#include "stdint.h"
+#include "string.h"
+#include "Arduino.h"
+#endif
 
 #define FONT_CHAR_LENGHT 6
 
@@ -223,6 +229,11 @@ class simpleMatrix{
          * \param start_from The offset in the *mat where the function will start accessing.
          */
         void sendMatrixBuffer(uint8_t *mat=NULL, int start_from=0);
+        
+#ifdef TEST_EXTERNAL
+        uint8_t *return_external_matrix(void);
+#endif
+
     private:
         uint8_t *_matrix;                   // The display and row addressed array containing data to be sent to the displays
         uint8_t *_matrix_col;               // A column-addressed array containing the previous data. Used for memory

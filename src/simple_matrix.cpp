@@ -188,7 +188,7 @@ void simpleMatrix::clearPixel(int x, int y){
     sendMatrixBuffer();
 }
 
-void simpleMatrix::setRowPixel(int x0, int x1, int y){
+void simpleMatrix::setRowPixels(int x0, int x1, int y){
     for(int x=x0; x<=x1; x++){
         if(_IS_DISPLAY_VERTICAL){
             _matrix_col[y] |= (1<<x);
@@ -199,8 +199,30 @@ void simpleMatrix::setRowPixel(int x0, int x1, int y){
     sendMatrixBuffer();
 }
 
-void simpleMatrix::clearRowPixel(int x0, int x1, int y){
+void simpleMatrix::clearRowPixels(int x0, int x1, int y){
     for(int x=x0; x<=x1; x++){
+        if(_IS_DISPLAY_VERTICAL){
+            _matrix_col[y] &= ~(1<<x);
+        } else {
+            _matrix_col[x] &= ~(1<<y);
+        }
+    }
+    sendMatrixBuffer();
+}
+
+void simpleMatrix::setColumnPixels(int x, int y0, int y1){
+    for(int y=y0; y<=y1; y++){
+        if(_IS_DISPLAY_VERTICAL){
+            _matrix_col[y] |= (1<<x);
+        } else {
+            _matrix_col[x] |= (1<<y);
+        }
+    }
+    sendMatrixBuffer();
+}
+
+void simpleMatrix::clearColumnPixels(int x, int y0, int y1){
+    for(int y=y0; y<=y1; y++){
         if(_IS_DISPLAY_VERTICAL){
             _matrix_col[y] &= ~(1<<x);
         } else {
@@ -214,7 +236,7 @@ void simpleMatrix::clearRowPixel(int x0, int x1, int y){
 void simpleMatrix::scrollTextPROGMEM(const char *text, int del, bool left_to_right, int start_from){
     // If the default value is unchanged, set the start from the end of the matrix
     if(start_from == (int)0x8000){
-        start_from = left_to_right ? -(strlen(text)*FONT_CHAR_LENGHT) : (8*_NUMB_OF_LED_MATRICES)+1;
+        start_from = left_to_right ? -(strlen_P(text)*FONT_CHAR_LENGHT) : (8*_NUMB_OF_LED_MATRICES)+1;
     }
     // Exit if the delay is 0, as that's the point of this function
     if(del == 0){
@@ -257,7 +279,7 @@ void simpleMatrix::scrollTextLeftToRight(const char *text, int del, int start_fr
 
 void simpleMatrix::print(const char *text, int start_from, int del, bool left_to_right, bool is_text_progmem){
     uint8_t display[8*_NUMB_OF_LED_MATRICES];     // Internal display buffer
-    int text_lenght = strlen(text);                        // The lenght of the string
+    int text_lenght = is_text_progmem ? strlen_P(text) : strlen(text);                        // The lenght of the string
     int text_arr_lenght = text_lenght*FONT_CHAR_LENGHT;          // The column lenght of the text 
     if(_IS_DISPLAY_VERTICAL){
       text_arr_lenght = text_lenght*8; 

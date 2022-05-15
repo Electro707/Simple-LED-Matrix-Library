@@ -4,7 +4,6 @@
  *
  * \todo Create more examples.
  * \todo Publish pictures.
- * \todo Have buffer scrolling be able to be done from left to right.
  * \todo Add full support for the MAX7221 chipset.
  * 
  * \section Installation Installation 
@@ -25,10 +24,6 @@
  * 
  * \section GitHub GitHub Repo
  * <a href="https://github.com/Electro707/Simple-LED-Matrix-Library">Link to the library's Github repository</a>
- *
- * \section ODocs Old Documentation
- * To check out the old documentation page, click <a href="https://electro707.com/documentation/Libraries/simple_led_library_old_docs/index.php">Here!</a>
- * \warning The above old docs page is invalid since v1.4 of this library due to significant function changes.
  *
  */
 
@@ -191,7 +186,7 @@ class simpleMatrix{
          * \param x1 The end x position for the pixels to be set
          * \param y The y position of the pixels to be set
          */
-        void setRowPixel(int x0, int x1, int y);
+        void setRowPixels(int x0, int x1, int y);
         
         /**
          * \brief Clears a row of pixels
@@ -199,7 +194,23 @@ class simpleMatrix{
          * \param x1 The end x position for the pixels to be cleared
          * \param y The y position of the pixels to be cleared
          */
-        void clearRowPixel(int x0, int x1, int y);
+        void clearRowPixels(int x0, int x1, int y);
+        
+        /**
+         * \brief Set a column of pixels
+         * \param x The x position of the pixels to be set
+         * \param y0 The start y position for the pixels to be set
+         * \param y1 The end y position for the pixels to be set
+         */
+        void setColumnPixels(int x, int y0, int y1);
+        
+        /**
+         * \brief Clears a column of pixels
+         * \param x The x position of the pixels to be cleared
+         * \param y0 The start y position for the pixels to be cleared
+         * \param y1 The end y position for the pixels to be cleared
+         */
+        void clearColumnPixels(int x, int y0, int y1);
         
         /**
          * \brief A wrapper function for the sendColumnBuffer() function.

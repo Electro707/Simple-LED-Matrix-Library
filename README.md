@@ -7,7 +7,7 @@ While the library tries to focus on simplicity and ease-of-use, performance was 
 
 To get started, you will need both an Arduino (any kind should work), and a MAX7219 LED Matrix. Both parts can be bought from many places, including Amazon, Ebay, Aliexpress, Adafruit, etc.
 
-For more documentation, see [my website!](https://www.electro707.com/documentation/Libraries/simple_led_library/index.html)
+For more documentation, see [my website!](https://www.electro707.com/documentation/Libraries/simple_led_library/stable/index.html)
 
 ## Wiring LED Matrix to Arduino
 

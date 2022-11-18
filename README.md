@@ -1,4 +1,5 @@
 # Simple LED Matrix Library
+[![Compile Examples](https://github.com/Electro707/Simple-LED-Matrix-Library/workflows/Compile%20Examples/badge.svg)](https://github.com/Electro707/Simple-LED-Matrix-Library/actions?workflow=Compile+Examples)
 
 This is a library to drive MAX7219 LED matrices. This library has been designed to be both simple to use for beginners, while leaving a lot to play around with for advanced users.
 While the library tries to focus on simplicity and ease-of-use, performance was a major priority while developing this library (to allow for fast scrolling text for example).

@@ -1,4 +1,5 @@
 # Simple LED Matrix Library
+[![Compile Examples](https://github.com/Electro707/Simple-LED-Matrix-Library/workflows/Compile%20Examples/badge.svg)](https://github.com/Electro707/Simple-LED-Matrix-Library/actions?workflow=Compile+Examples)
 
 This is a library to drive MAX7219 LED matrices. This library has been designed to be both simple to use for beginners, while leaving a lot to play around with for advanced users.
 While the library tries to focus on simplicity and ease-of-use, performance was a major priority while developing this library (to allow for fast scrolling text for example).
@@ -7,7 +8,7 @@ While the library tries to focus on simplicity and ease-of-use, performance was 
 
 To get started, you will need both an Arduino (any kind should work), and a MAX7219 LED Matrix. Both parts can be bought from many places, including Amazon, Ebay, Aliexpress, Adafruit, etc.
 
-For more documentation, see [my website!](https://www.electro707.com/documentation/Libraries/simple_led_library/index.html)
+For more documentation, see [my website!](https://www.electro707.com/documentation/Libraries/simple_led_library/stable/index.html)
 
 ## Wiring LED Matrix to Arduino
 

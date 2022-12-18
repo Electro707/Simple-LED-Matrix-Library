@@ -33,7 +33,11 @@
 #ifndef TEST_EXTERNAL
 #include "Arduino.h"
 #include <SPI.h>
+#ifdef ARDUINO_ARCH_AVR
 #include <avr/pgmspace.h>
+#else
+#include <pgmspace.h>
+#endif
 #else
 #include "stdint.h"
 #include "string.h"

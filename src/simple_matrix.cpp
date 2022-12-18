@@ -83,7 +83,7 @@ void simpleMatrix::senddisplay(){
 //Initalizes the library. Starts the SPI periferal and sends nessesary commands
 void simpleMatrix::begin(){
     SPI.begin();
-    SPI.setBitOrder(MSBFIRST);
+    SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE0));
     sendCommandtoAll(0x0C,0x00); //Enter shutdown mode
     sendCommandtoAll(0x0B,0x07); //MAX7219 scan all 8 digits(in this case 8 rows)
     sendCommandtoAll(0x0A,0x0F); //Set to max intensity

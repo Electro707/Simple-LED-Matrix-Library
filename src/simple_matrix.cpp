@@ -14,6 +14,12 @@ Originally designed for the University of New Haven's
 // Macro to treat the 1D array _matrix as a 2D array
 #define _GET_MATRIX_LOC(_MATRIX_NUMB, _ROW_NUMB) _matrix[(8*_MATRIX_NUMB)+_ROW_NUMB]
 
+// If we aren't using an AVR core, redefine pgm_read_byte_near to just lookup on a constant
+// Copied from https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/pgmspace.h
+#ifndef ARDUINO_ARCH_AVR
+#define pgm_read_byte(addr)   (*(const unsigned char *)(addr))
+#endif
+
 /********************************************************************************
 Constructor
 ********************************************************************************/

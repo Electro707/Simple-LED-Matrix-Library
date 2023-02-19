@@ -2,6 +2,8 @@
  * \mainpage
  * \brief A library designed to allow for an easy and quick experience programing an LED matrix with an Arduino, even with little prior knowledge of coding or electronics.
  *
+ * \image html train_choo.gif "Train goes brrrr" width=12%
+ *
  * \todo Create more examples.
  * \todo Publish pictures.
  * \todo Add full support for the MAX7221 chipset.
@@ -35,8 +37,6 @@
 #include <SPI.h>
 #ifdef ARDUINO_ARCH_AVR
 #include <avr/pgmspace.h>
-#else
-#include <pgmspace.h>
 #endif
 #else
 #include "stdint.h"

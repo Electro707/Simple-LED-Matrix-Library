@@ -9,13 +9,14 @@ void pinMode(int, int){
 }
 void digitalWrite(int, int){
 }
-
 void SPI_CLASS::transfer(uint8_t a){
 //     printf("%02x", a);
 }
 void SPI_CLASS::begin(void){
 }
 void SPI_CLASS::setBitOrder(int){
+}
+void SPI_CLASS::beginTransaction(SPISettings settings){
 }
 char pgm_read_byte_near(const char*){
   return 0xAA;
@@ -275,7 +276,7 @@ uint8_t TRAIIIINNNNNNN[] = {
 uint8_t column_lenght = 232;
 
 extern "C" {
-    int test_f(void (*f)(uint8_t *, int)){    
+    int test_f(void (*f)(uint8_t *, int)){
     callback_f = f;   // Callback function to give the array to the Python application for processing
     
     // Test application. Change this to what you want

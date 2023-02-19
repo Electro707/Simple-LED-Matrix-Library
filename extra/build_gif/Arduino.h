@@ -23,11 +23,24 @@ void send_display_buffer();
 
 #define MSBFIRST 0
 
+#define SPI_MODE0 0
+
+#define strlen_P strlen
+
+class SPISettings {
+  public:
+    SPISettings(uint32_t clock, uint8_t bitOrder, uint8_t dataMode) {
+    }
+  private:
+    friend class SPIClass;
+};
+
 class SPI_CLASS{
     public:
       void transfer(uint8_t a);
       void begin(void);
       void setBitOrder(int);
+      void beginTransaction(SPISettings settings);
 };
 
 extern SPI_CLASS SPI;

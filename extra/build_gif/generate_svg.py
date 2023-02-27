@@ -13,9 +13,13 @@ import ctypes
 from cairosvg import svg2png
 from PIL import Image
 import glob
+import os
 
 f_name = 1
 delay_arr = []
+image_folder = 'gen_imgs'
+make_folder = 'build/'
+output_folder = 'out'
 
 @ctypes.CFUNCTYPE(ctypes.c_void_p, ctypes.POINTER(ctypes.c_char), ctypes.c_int)
 def got_display(a, delay):
@@ -37,34 +41,43 @@ def got_display(a, delay):
         for r in range(8):
             for c in range(8):
                 if r==0 and c==0 and d==0:
-                    continue
-                el = deepcopy(led_bodies[0])
-                el.attrib["id"] = 'led{:d}_{:d}'.format(r, c)
-                el.attrib["cy"] = str(30 - (r*4))
-                el.attrib["cx"] = str(2 + (c*4) + (d*8*4))
+                    el = led_bodies[0]
+                else:
+                    el = deepcopy(led_bodies[0])
+                    el.attrib["id"] = 'led{:d}_{:d}'.format(r, c)
+                    el.attrib["cy"] = str(30 - (r*4))
+                    el.attrib["cx"] = str(2 + (c*4) + (d*8*4))
+
                 if ord(a[(d*8)+r]) & (1 << c) != 0:
                     el.attrib["style"] = el.attrib["style"].replace("fefefe", "ff0000")
-                led_bodies.append(el)
+
+                if not(r==0 and c==0 and d==0):
+                    led_bodies.append(el)
     
     # Add the LEDs after all is done so they appear on top
     for l in led_bodies:
         root.append(l)
-    svg2png(bytestring=ElementTree.tostring(root, encoding='utf8', method='xml'),write_to='test1/led_natrix_{:03d}.png'.format(f_name), dpi=300)
+    svg2png(bytestring=ElementTree.tostring(root, encoding='utf8', method='xml'),write_to=f'{image_folder}/led_natrix_{f_name:03d}.png', dpi=300)
     delay_arr.append(float(delay))
+    print(f"Done with frame {f_name}")
     f_name += 1
 
-# Load the test dll
-lib = cdll.LoadLibrary('./libtest.so')
-lib.test_f(got_display)
+if not os.path.isdir(f"{image_folder}"):
+    os.mkdir(f"{image_folder}")
+if not os.path.isdir(f"{output_folder}"):
+    os.mkdir(f"{output_folder}")
 
+# Load the test dll
+lib = cdll.LoadLibrary(f'./{make_folder}libtest.so')
+lib.test_f(got_display)
 # Create the frames
 frames = []
-imgs = sorted(glob.glob("test1/*.png"))
+imgs = sorted(glob.glob(f"{image_folder}/*.png"))
 for i in imgs:
     new_frame = Image.open(i)
     frames.append(new_frame)
 
-frames[0].save('test1/png_to_gif.gif', optimize=True,
+frames[0].save(f'{output_folder}/png_to_gif.gif', optimize=True,
                append_images=frames[1:],
                save_all=True,
                duration=delay_arr, loop=0)

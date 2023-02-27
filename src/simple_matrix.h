@@ -107,6 +107,11 @@ class simpleMatrix{
          *                      false for right to left, true for left to right
          * \param start_from Which column the text will start scrolling from. 
          *                   Defaults to have the display be empty then having the text apear for both directions
+         *
+         * \code{.cpp}
+         *   class Cpp {};
+         * \endcode
+         * \image html fillDisplay1.gif "fillDisplay1" width=12%
          */
         void scrollText(const char *text, int del, bool left_to_right=false, int start_from=0x8000);
 

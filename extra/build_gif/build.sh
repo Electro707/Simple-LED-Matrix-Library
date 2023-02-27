@@ -1,3 +1,4 @@
+#!/bin/bash
 <<COMMENT
   Builds a test shared library to be used with generate_images.py.
   
@@ -5,7 +6,19 @@
   a function in the library that returns the internal matrix buffer. The test application is also 
   compiled
 COMMENT
-g++ -c -fPIC -D TEST_EXTERNAL -I . -I ../../src ../../src/simple_matrix.cpp -o simple_matrix.o
-g++ -c -fPIC -D TEST_EXTERNAL -I . -I ../../src test.cpp -o test.o
-g++ -shared -Wl,-soname,libtest.so -L . -o libtest.so simple_matrix.o test.o 
-# python generate_svg.py 
+
+BUILD_FOLDER=build
+PROGRAM_FOLDER=programs
+LIBRARY_SOURCE=../../src
+
+mkdir -p $BUILD_FOLDER
+
+# Compile the matrix library
+g++ -c -fPIC -D TEST_EXTERNAL -I . -I $LIBRARY_SOURCE $LIBRARY_SOURCE/simple_matrix.cpp -o $BUILD_FOLDER/simple_matrix.o
+# Compile the test application
+g++ -c -fPIC -D TEST_EXTERNAL -I . -I $LIBRARY_SOURCE $PROGRAM_FOLDER/$1.cpp -o $BUILD_FOLDER/test.o
+# Link the test application and library
+g++ -shared -Wl,-soname,libtest.so -L . -o $BUILD_FOLDER/libtest.so $BUILD_FOLDER/simple_matrix.o $BUILD_FOLDER/test.o
+
+
+python generate_svg.py

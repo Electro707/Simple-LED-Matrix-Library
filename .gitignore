@@ -7,3 +7,6 @@ examples/*/build
 # Things related to building the GIF images with the library in extra/build_gif
 *.o
 *.so
+
+# Backup stuff
+*.bak

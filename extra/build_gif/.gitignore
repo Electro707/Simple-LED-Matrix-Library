@@ -1,5 +1,6 @@
 # Test folder for GIF outputs
-test*
+gen_imgs
+out
 # Compiled files
 *.so
 *.o

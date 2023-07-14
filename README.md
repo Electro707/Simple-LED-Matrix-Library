@@ -1,4 +1,6 @@
 # Simple LED Matrix Library
+### By electro707 (Jamal Bouajjaj)
+
 [![Compile Examples](https://github.com/Electro707/Simple-LED-Matrix-Library/workflows/Compile%20Examples/badge.svg)](https://github.com/Electro707/Simple-LED-Matrix-Library/actions?workflow=Compile+Examples)
 
 This is a library to drive MAX7219 LED matrices. This library has been designed to be both simple to use for beginners, while leaving a lot to play around with for advanced users.
@@ -44,10 +46,11 @@ All releases will be tagged and released, which such version will be available t
 
 If you want to experiment with the lastest and greatest (and the buggiest), you should download the latest Develop branch release.
 
-## Authors
-
-* **Jamal Bouajjaj**
-
 ## License
 
 See the [LICENSE](LICENSE) file for details
+
+## More Docs
+There is one more documentation (other than the library docs as per above) available, which describes how to generate the LED Matrix GIFs that are found with the library's docs page.
+
+For that, see [extra/GENERATE_GIF.md](extra/GENERATE_GIF.md) for details

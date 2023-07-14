@@ -1,6 +1,6 @@
-/*
-  Mock Arduino.h to be used with test.cpp and generate_img.py with build.sh
-*/
+/**
+ * Mock Arduino.h to be used with test.cpp and generate_img.py with build.sh
+ */
 #ifndef ARDUINO_H
 #define ARDUINO_H
 

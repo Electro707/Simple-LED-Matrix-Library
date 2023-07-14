@@ -14,12 +14,19 @@ from cairosvg import svg2png
 from PIL import Image
 import glob
 import os
+import sys
 
 f_name = 1
 delay_arr = []
 image_folder = 'gen_imgs'
 make_folder = 'build/'
 output_folder = 'out'
+
+if len(sys.argv) !=2 :
+    print("Too many or too little arguments given")
+    sys.exit(1)
+
+function_name = sys.argv[1]
 
 @ctypes.CFUNCTYPE(ctypes.c_void_p, ctypes.POINTER(ctypes.c_char), ctypes.c_int)
 def got_display(a, delay):
@@ -31,6 +38,8 @@ def got_display(a, delay):
     root = document.getroot()
     led_bodies = [root.find(".//*[@id='led0_0']")]
     body = root.find(".//*[@id='body1']")
+    # Make a copy of the first LED in case the frame sets the first LED to filled
+    led_base = deepcopy(led_bodies[0])
     
     for d in range(4):
         if d != 0:
@@ -43,8 +52,8 @@ def got_display(a, delay):
                 if r==0 and c==0 and d==0:
                     el = led_bodies[0]
                 else:
-                    el = deepcopy(led_bodies[0])
-                    el.attrib["id"] = 'led{:d}_{:d}'.format(r, c)
+                    el = deepcopy(led_base)
+                    el.attrib["id"] = 'led{:d}_{:d}_{:d}'.format(d, r, c)
                     el.attrib["cy"] = str(30 - (r*4))
                     el.attrib["cx"] = str(2 + (c*4) + (d*8*4))
 
@@ -69,7 +78,7 @@ if not os.path.isdir(f"{output_folder}"):
 
 # Load the test dll
 lib = cdll.LoadLibrary(f'./{make_folder}libtest.so')
-lib.test_f(got_display)
+getattr(lib, function_name)(got_display)
 # Create the frames
 frames = []
 imgs = sorted(glob.glob(f"{image_folder}/*.png"))
@@ -77,7 +86,7 @@ for i in imgs:
     new_frame = Image.open(i)
     frames.append(new_frame)
 
-frames[0].save(f'{output_folder}/png_to_gif.gif', optimize=True,
+frames[0].save(f'{output_folder}/{function_name}.gif', optimize=True,
                append_images=frames[1:],
                save_all=True,
                duration=delay_arr, loop=0)

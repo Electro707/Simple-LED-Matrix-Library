@@ -51,8 +51,6 @@ class simpleMatrix{
         /**
          * \brief The class constructor of this library.
          * \param pin The Arduino pin in which the CS line from the matrix is connected to.
-         * \param rotateIndividualDislay Whether to rotate each individual display while sending data. 
-                                         Useful as some display are 'inverted' in their LED matrix orientation.
          * \param numb_modules The number of modules. Defaults to 4 8x8 LED matrices
          */
         simpleMatrix(int pin, unsigned int numb_modules=4);
@@ -96,6 +94,16 @@ class simpleMatrix{
          * By default, this function will fill the entire display (all matrices).
          * \param from Which LED matrix to start filling from.
          * \param to Which LED matrix to fill up to.
+         * 
+         * \section Example
+         * \code{.cpp}
+         *   disp.fillDisplay();
+         * \endcode
+         * \image html fillDisplay1.gif "fillDisplay1" width=12%
+         * \code{.cpp}
+         *   disp.fillDisplay(0, 2);
+         * \endcode
+         * \image html fillDisplay2.gif "fillDisplay2" width=12%
          */
         void fillDisplay(int from=0, int to=0x8000);
         
@@ -108,10 +116,15 @@ class simpleMatrix{
          * \param start_from Which column the text will start scrolling from. 
          *                   Defaults to have the display be empty then having the text apear for both directions
          *
+         * \section Example
          * \code{.cpp}
-         *   class Cpp {};
+         *   disp.scrollText("Hello World!", 50);
          * \endcode
-         * \image html fillDisplay1.gif "fillDisplay1" width=12%
+         * \image html scrollText1.gif "scrollText1" width=12%
+         * \code{.cpp}
+         *   disp.scrollText("Hello World!", 50, true);
+         * \endcode
+         * \image html scrollText2.gif "scrollText2" width=12%
          */
         void scrollText(const char *text, int del, bool left_to_right=false, int start_from=0x8000);
 
@@ -194,6 +207,15 @@ class simpleMatrix{
          * \param x0 The start x position for the pixels to be set
          * \param x1 The end x position for the pixels to be set
          * \param y The y position of the pixels to be set
+         * 
+         * \section Example
+         * \code{.cpp}
+         *   disp.setColumnPixels(0, 0, 2);
+         *   disp.setColumnPixels(3, 5, 7);
+         *   disp.setColumnPixels(8, 0, 7);
+         *   disp.setColumnPixels(12, 3, 5);
+         * \endcode
+         * \image html setRowPixels1.gif "setRowPixels1" width=12%
          */
         void setRowPixels(int x0, int x1, int y);
         
@@ -210,6 +232,15 @@ class simpleMatrix{
          * \param x The x position of the pixels to be set
          * \param y0 The start y position for the pixels to be set
          * \param y1 The end y position for the pixels to be set
+         * 
+         * \section Example
+         * \code{.cpp}
+         *   disp.setColumnPixels(0, 0, 2);
+         *   disp.setColumnPixels(3, 5, 7);
+         *   disp.setColumnPixels(8, 0, 7);
+         *   disp.setColumnPixels(12, 3, 5);
+         * \endcode
+         * \image html setColumnPixels1.gif "setColumnPixels1" width=12%
          */
         void setColumnPixels(int x, int y0, int y1);
         

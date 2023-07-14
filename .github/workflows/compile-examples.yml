@@ -60,9 +60,10 @@ jobs:
           - fqbn: arduino:mbed_portenta:envie_m7
             platforms: |
               - name: arduino:mbed_portenta
-          - fqbn: arduino:mbed_portenta:envie_m4
-            platforms: |
-              - name: arduino:mbed_portenta
+          # TODO: This does not exist in mbed_portenta
+          # - fqbn: arduino:mbed_portenta:envie_m4
+          #   platforms: |
+          #     - name: arduino:mbed_portenta
           - fqbn: arduino:mbed_nano:nano33ble
             platforms: |
               - name: arduino:mbed_nano

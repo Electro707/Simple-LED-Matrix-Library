@@ -35,11 +35,6 @@ Install this library by using Arduino's Library Manager, and looking up _simple 
 You could also download this library directly as a ZIP file and install it in your Arduino. See [here](https://www.arduino.cc/en/Guide/Libraries#importing-a-zip-library) for a guide from Arduino's website.
 You could either download a release candidate (thru Github's release/tag manager) or the development/unstable branch directly from this repo's Develop branch.
 
-## To-Do
-- Create more examples
-- More internal documentation
-- Add ability to scroll a column-arrayed buffer from left to right
-
 ## Release
 
 All releases will be tagged and released, which such version will be available thru Arduino's Library Manager.
@@ -51,6 +46,6 @@ If you want to experiment with the lastest and greatest (and the buggiest), you 
 See the [LICENSE](LICENSE) file for details
 
 ## More Docs
-There is one more documentation (other than the library docs as per above) available, which describes how to generate the LED Matrix GIFs that are found with the library's docs page.
+There is one more documentation (other than the library docs as per above) available, which describes how to generate documentation, test the examples, and generate the LED Matrix GIFs that are found with the library's docs page.
 
-For that, see [extra/GENERATE_GIF.md](extra/GENERATE_GIF.md) for details
+For that, see [extra/README.md](extra/README.md) for details

@@ -181,6 +181,22 @@ class simpleMatrix{
          * \param del The delay between each frame while scrolling.
          * \param left_to_right false for the text to be scrolled from left to right, true to be scrolled from right to left.
          * \param is_text_progmem Whether the text is stored in Flash or RAM.
+         *
+         * \section Example
+         * \code{.cpp}
+         *   disp.print("Hello World!");
+         * \endcode
+         * \image html print1.gif "print1" width=12%
+         * \code{.cpp}
+         *   disp.print("Hello World!");   // just for a 1 second display
+         *   delay(1000);
+         *   disp.print("Hello World!", 0, return_delay);
+         * \endcode
+         * \image html print2.gif "print2" width=12%
+         * \code{.cpp}
+         *   disp.print("Hello World!", 32, return_delay);
+         * \endcode
+         * \image html print3.gif "print3" width=12%
          */
         void print(const char *text, int start_from=0, int del=0, bool left_to_right=false, bool is_text_progmem=false);
         
@@ -193,12 +209,48 @@ class simpleMatrix{
         /**
          * \brief Sets a single pixel in the LED matrices.
          * \param x,y The coordinates of the pixel to be set.
+         *
+         * \section Example
+         * \code{.cpp}
+         *   disp.setPixel(0, 0);
+         *   disp.setPixel(7, 7);
+         *   disp.setPixel(12, 5);
+         *   disp.setPixel(20, 3);
+         * \endcode
+         * \image html setPixel1.gif "setPixel1" width=12%
+         * \code{.cpp}
+         *   for(int y=0;y<8;y++){
+         *       for(int x=0;x<32;x++){
+         *           disp.setPixel(x, y);
+         *       }
+         *   }
+         * \endcode
+         * \image html setPixel2.gif "setPixel2" width=12%
          */
         void setPixel(int x, int y);
         
         /**
          * \brief Clears a single pixel in the LED matrices.
          * \param x,y The coordinates of the pixel to be cleared.
+         *
+         * \section Example
+         * \code{.cpp}
+         *   disp.fillDisplay();
+         *   disp.clearPixel(0, 0);
+         *   disp.clearPixel(7, 7);
+         *   disp.clearPixel(12, 5);
+         *   disp.clearPixel(20, 3);
+         * \endcode
+         * \image html clearPixel1.gif "clearPixel1" width=12%
+         * \code{.cpp}
+         *   disp.fillDisplay();
+         *   for(int y=0;y<8;y++){
+         *       for(int x=0;x<32;x++){
+         *           disp.clearPixel(x, y);
+         *       }
+         *   }
+         * \endcode
+         * \image html clearPixel2.gif "clearPixel2" width=12%
          */
         void clearPixel(int x, int y);
         

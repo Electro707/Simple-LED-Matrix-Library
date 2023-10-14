@@ -122,6 +122,108 @@ extern "C" {
     return 0;
   }
 
+  int setPixel1(void (*f)(uint8_t *, int)){
+    callback_f = f;   // Callback function to give the array to the Python application for processing
+    return_delay = 1000;
+
+    // Test application. Change this to what you want
+    disp.begin();
+
+    disp.setPixel(0, 0);
+    disp.setPixel(7, 7);
+    disp.setPixel(12, 5);
+    disp.setPixel(20, 3);
+
+    return 0;
+  }
+
+  int setPixel2(void (*f)(uint8_t *, int)){
+    callback_f = f;   // Callback function to give the array to the Python application for processing
+    return_delay = 100;
+
+    // Test application. Change this to what you want
+    disp.begin();
+
+    for(int y=0;y<8;y++){
+      for(int x=0;x<32;x++){
+        disp.setPixel(x, y);
+      }
+    }
+
+    return 0;
+  }
+
+  int clearPixel1(void (*f)(uint8_t *, int)){
+    callback_f = f;   // Callback function to give the array to the Python application for processing
+    return_delay = 1000;
+
+    // Test application. Change this to what you want
+    disp.begin();
+    disp.fillDisplay();
+
+    disp.clearPixel(0, 0);
+    disp.clearPixel(7, 7);
+    disp.clearPixel(12, 5);
+    disp.clearPixel(20, 3);
+
+    return 0;
+  }
+
+  int clearPixel2(void (*f)(uint8_t *, int)){
+    callback_f = f;   // Callback function to give the array to the Python application for processing
+    return_delay = 100;
+
+    // Test application. Change this to what you want
+    disp.begin();
+    disp.fillDisplay();
+
+    for(int y=0;y<8;y++){
+      for(int x=0;x<32;x++){
+        disp.clearPixel(x, y);
+      }
+    }
+
+    return 0;
+  }
+
+  int print1(void (*f)(uint8_t *, int)){
+    callback_f = f;   // Callback function to give the array to the Python application for processing
+    return_delay = 1000;
+
+    // Test application. Change this to what you want
+    disp.begin();
+
+    disp.print("Hello World!");
+
+    return 0;
+  }
+
+  int print2(void (*f)(uint8_t *, int)){
+    callback_f = f;   // Callback function to give the array to the Python application for processing
+    return_delay = 1000;
+
+    // Test application. Change this to what you want
+    disp.begin();
+
+    disp.print("Hello World!");   // just for a 1 second display
+    return_delay = 100;
+    disp.print("Hello World!", 0, return_delay);
+
+    return 0;
+  }
+
+  int print3(void (*f)(uint8_t *, int)){
+    callback_f = f;   // Callback function to give the array to the Python application for processing
+    return_delay = 100;
+
+    // Test application. Change this to what you want
+    disp.begin();
+
+    disp.print("Hello World!", 32, return_delay);
+
+    return 0;
+  }
+
   int trainn(void (*f)(uint8_t *, int)){
     callback_f = f;   // Callback function to give the array to the Python application for processing
 

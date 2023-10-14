@@ -5,7 +5,6 @@
  * \image html train_choo.gif "Train goes brrrr" width=12%
  *
  * \todo Create more examples.
- * \todo Publish pictures.
  * \todo Add full support for the MAX7221 chipset.
  * 
  * \section Installation Installation 

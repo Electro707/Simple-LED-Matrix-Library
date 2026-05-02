@@ -47,55 +47,55 @@ extern "C" {
   int fillDisplay1(void (*f)(uint8_t *, int)){
     callback_f = f;   // Callback function to give the array to the Python application for processing
     return_delay = 1000;
-    
+
     // Test application. Change this to what you want
     disp.begin();
 
     disp.fillDisplay();
-    
+
     return 0;
   }
 
   int fillDisplay2(void (*f)(uint8_t *, int)){
     callback_f = f;   // Callback function to give the array to the Python application for processing
     return_delay = 1000;
-    
+
     // Test application. Change this to what you want
     disp.begin();
 
     disp.fillDisplay(0, 2);
-    
+
     return 0;
   }
 
   int scrollText1(void (*f)(uint8_t *, int)){
     callback_f = f;   // Callback function to give the array to the Python application for processing
     return_delay = 50;
-    
+
     // Test application. Change this to what you want
     disp.begin();
 
     disp.scrollText("Hello World!", 50);
-    
+
     return 0;
   }
 
   int scrollText2(void (*f)(uint8_t *, int)){
     callback_f = f;   // Callback function to give the array to the Python application for processing
     return_delay = 50;
-    
+
     // Test application. Change this to what you want
     disp.begin();
 
     disp.scrollText("Hello World!", 50, true);
-    
+
     return 0;
   }
 
   int setColumnPixels1(void (*f)(uint8_t *, int)){
     callback_f = f;   // Callback function to give the array to the Python application for processing
     return_delay = 1000;
-    
+
     // Test application. Change this to what you want
     disp.begin();
 
@@ -103,14 +103,14 @@ extern "C" {
     disp.setColumnPixels(3, 5, 7);
     disp.setColumnPixels(8, 0, 7);
     disp.setColumnPixels(12, 3, 5);
-    
+
     return 0;
   }
 
   int setRowPixels1(void (*f)(uint8_t *, int)){
     callback_f = f;   // Callback function to give the array to the Python application for processing
     return_delay = 1000;
-    
+
     // Test application. Change this to what you want
     disp.begin();
 
@@ -118,7 +118,7 @@ extern "C" {
     disp.setRowPixels(10, 12, 0);
     disp.setRowPixels(0, 15, 5);
     disp.setRowPixels(20, 31, 7);
-    
+
     return 0;
   }
 
@@ -153,6 +153,23 @@ extern "C" {
     return 0;
   }
 
+  int setPixelBuff1(void (*f)(uint8_t *, int)){
+    callback_f = f;   // Callback function to give the array to the Python application for processing
+    return_delay = 1000;
+
+    // Test application. Change this to what you want
+    disp.begin();
+
+    disp.setPixelBuff(0, 0);
+    disp.setPixelBuff(7, 7);
+    disp.sendMatrixBuffer();
+    disp.setPixelBuff(12, 5);
+    disp.setPixelBuff(20, 3);
+    disp.sendMatrixBuffer();
+
+    return 0;
+  }
+
   int clearPixel1(void (*f)(uint8_t *, int)){
     callback_f = f;   // Callback function to give the array to the Python application for processing
     return_delay = 1000;
@@ -182,6 +199,24 @@ extern "C" {
         disp.clearPixel(x, y);
       }
     }
+
+    return 0;
+  }
+
+  int clearPixelBuff1(void (*f)(uint8_t *, int)){
+    callback_f = f;   // Callback function to give the array to the Python application for processing
+    return_delay = 1000;
+
+    // Test application. Change this to what you want
+    disp.begin();
+    disp.fillDisplay();
+
+    disp.clearPixelBuff(0, 0);
+    disp.clearPixelBuff(7, 7);
+    disp.sendMatrixBuffer();
+    disp.clearPixelBuff(12, 5);
+    disp.clearPixelBuff(20, 3);
+    disp.sendMatrixBuffer();
 
     return 0;
   }
@@ -227,7 +262,7 @@ extern "C" {
   int trainn(void (*f)(uint8_t *, int)){
     callback_f = f;   // Callback function to give the array to the Python application for processing
 
-    uint8_t TRAIIIINNNNNNN[] = { 
+    uint8_t TRAIIIINNNNNNN[] = {
       0b11100,
       0b101100,
       0b1001110,
@@ -468,8 +503,8 @@ extern "C" {
     return_delay = 45;
     disp.scrollText("CHOOO CHOOO !!!", 10);
     return_delay = 20;
-    disp.scrollBuffer(TRAIIIINNNNNNN, 10, column_lenght);  
-    
+    disp.scrollBuffer(TRAIIIINNNNNNN, 10, column_lenght);
+
     return 0;
   }
 

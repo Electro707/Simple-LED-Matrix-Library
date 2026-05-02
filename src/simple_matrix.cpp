@@ -6,7 +6,7 @@
 simpleMatrix Library
 This library is designed to handle all the low and high level functions for
     the MAX7219 LED Matrixes.
-Originally designed for the University of New Haven's 
+Originally designed for the University of New Haven's
     Makerspace's Make-A-Sign Event.
 
     Author: Jamal Bouajjaj
@@ -31,7 +31,7 @@ simpleMatrix::simpleMatrix(int pin, unsigned int numb_modules){
     // Internal 2D array that is addressed by row and by the LED matrix number that is used to update the displays
     _matrix = new uint8_t[(_NUMB_OF_LED_MATRICES+1)*8];
     // A copy of a column_addressed matrix. Used as memory for when new stuff is scrolled unto the display.
-    _matrix_col = new uint8_t[(_NUMB_OF_LED_MATRICES)*8];  
+    _matrix_col = new uint8_t[(_NUMB_OF_LED_MATRICES)*8];
     memset(_matrix, 0, (_NUMB_OF_LED_MATRICES+1)*8);
     memset(_matrix_col, 0, (_NUMB_OF_LED_MATRICES)*8);
     pinMode(_DL_PIN,OUTPUT);
@@ -52,7 +52,7 @@ Low Level Function
 //Sends a command to a single MS7219
 void simpleMatrix::sendCommandtoOne(uint8_t command, uint8_t data, uint8_t display){
     uint8_t d[_NUMB_OF_LED_MATRICES*2]; //Array that containts data to be sent
-    memset(d, 0, _NUMB_OF_LED_MATRICES*2); 
+    memset(d, 0, _NUMB_OF_LED_MATRICES*2);
     d[2*display] = command;
     d[(2*display)+1] = data;
     digitalWrite(_DL_PIN,LOW);
@@ -125,14 +125,14 @@ void simpleMatrix::sendMatrixBuffer(uint8_t *mat, int start_from){
         for(int i=0;i<8;i++){
             uint8_t bitmask_v = 1<<(i);
             for(int k=0;k<8;k++){
-                // From expericence, there are displays which have each matrix flipped 180degrees
+                // From experience, there are displays which have each matrix flipped 180degrees
                 // To combat this, there is a flag which will decide whether or not to rotate
                 // each matrix's buffer by 180degrees
                 if(_ROTATE_INDIV_DISPLAY){
                     if(_IS_DISPLAY_VERTICAL){
-                      temp[i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (7-k); 
+                      temp[i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (7-k);
                     } else {
-                      temp[7-i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (7-k); 
+                      temp[7-i] |= ((_matrix_col[k+(d*8)] & bitmask_v) >> (i)) << (7-k);
                     }
                 }else{
                     if(_IS_DISPLAY_VERTICAL){
@@ -168,7 +168,7 @@ void simpleMatrix::clearDisplay(int from, int to){
     memset(_matrix_col+(from*8), 0, (to-from)*8);       // Set the internal column-addressed column to said value
     // Due to the easiness of this operation, manually update the row/display addressed array and send it
     //      instead of using the sendMatrixBuffer function
-    for(int d=from;d<to;d++){ 
+    for(int d=from;d<to;d++){
         for(int i=0;i<8;i++){
             _GET_MATRIX_LOC(d, i) = 0x00;
         }
@@ -176,47 +176,63 @@ void simpleMatrix::clearDisplay(int from, int to){
     senddisplay();
 }
 
-void simpleMatrix::setPixel(int x, int y){
+void simpleMatrix::setPixelBuff(int x, int y){
     if(_IS_DISPLAY_VERTICAL){
         _matrix_col[y] |= (1<<x);
     } else {
         _matrix_col[x] |= (1<<y);
     }
+}
+
+void simpleMatrix::setPixel(int x, int y){
+    setPixelBuff(x, y);
     sendMatrixBuffer();
 }
 
-void simpleMatrix::clearPixel(int x, int y){
+void simpleMatrix::clearPixelBuff(int x, int y){
     if(_IS_DISPLAY_VERTICAL){
         _matrix_col[y] &= ~(1<<x);
     } else {
         _matrix_col[x] &= ~(1<<y);
     }
+}
+
+void simpleMatrix::clearPixel(int x, int y){
+    clearPixelBuff(x, y);
     sendMatrixBuffer();
+}
+
+void simpleMatrix::setRowPixelsBuff(int x0, int x1, int y){
+    for(int x=x0; x<=x1; x++){
+        if(_IS_DISPLAY_VERTICAL){
+            _matrix_col[y] |= (1<<x);
+        } else {
+            _matrix_col[x] |= (1<<y);
+        }
+    }
 }
 
 void simpleMatrix::setRowPixels(int x0, int x1, int y){
+    setRowPixelsBuff(x0, x1, y);
+    sendMatrixBuffer();
+}
+
+void simpleMatrix::clearRowPixelsBuff(int x0, int x1, int y){
     for(int x=x0; x<=x1; x++){
         if(_IS_DISPLAY_VERTICAL){
-            _matrix_col[y] |= (1<<x);
+            _matrix_col[y] &= ~(1<<x);
         } else {
-            _matrix_col[x] |= (1<<y);
+            _matrix_col[x] &= ~(1<<y);
         }
     }
-    sendMatrixBuffer();
 }
 
 void simpleMatrix::clearRowPixels(int x0, int x1, int y){
-    for(int x=x0; x<=x1; x++){
-        if(_IS_DISPLAY_VERTICAL){
-            _matrix_col[y] &= ~(1<<x);
-        } else {
-            _matrix_col[x] &= ~(1<<y);
-        }
-    }
+    clearRowPixelsBuff(x0, x1, y);
     sendMatrixBuffer();
 }
 
-void simpleMatrix::setColumnPixels(int x, int y0, int y1){
+void simpleMatrix::setColumnPixelsBuff(int x, int y0, int y1){
     for(int y=y0; y<=y1; y++){
         if(_IS_DISPLAY_VERTICAL){
             _matrix_col[y] |= (1<<x);
@@ -224,10 +240,14 @@ void simpleMatrix::setColumnPixels(int x, int y0, int y1){
             _matrix_col[x] |= (1<<y);
         }
     }
+}
+
+void simpleMatrix::setColumnPixels(int x, int y0, int y1){
+    setColumnPixelsBuff(x, y0, y1);
     sendMatrixBuffer();
 }
 
-void simpleMatrix::clearColumnPixels(int x, int y0, int y1){
+void simpleMatrix::clearColumnPixelsBuff(int x, int y0, int y1){
     for(int y=y0; y<=y1; y++){
         if(_IS_DISPLAY_VERTICAL){
             _matrix_col[y] &= ~(1<<x);
@@ -235,6 +255,10 @@ void simpleMatrix::clearColumnPixels(int x, int y0, int y1){
             _matrix_col[x] &= ~(1<<y);
         }
     }
+}
+
+void simpleMatrix::clearColumnPixels(int x, int y0, int y1){
+    clearColumnPixelsBuff(x, y0, y1);
     sendMatrixBuffer();
 }
 
@@ -286,19 +310,19 @@ void simpleMatrix::scrollTextLeftToRight(const char *text, int del, int start_fr
 void simpleMatrix::print(const char *text, int start_from, int del, bool left_to_right, bool is_text_progmem){
     uint8_t display[8*_NUMB_OF_LED_MATRICES];     // Internal display buffer
     int text_lenght = is_text_progmem ? strlen_P(text) : strlen(text);                        // The lenght of the string
-    int text_arr_lenght = text_lenght*FONT_CHAR_LENGHT;          // The column lenght of the text 
+    int text_arr_lenght = text_lenght*FONT_CHAR_LENGHT;          // The column lenght of the text
     if(_IS_DISPLAY_VERTICAL){
-      text_arr_lenght = text_lenght*8; 
-    }    
+      text_arr_lenght = text_lenght*8;
+    }
     for(int i=0;i<8*_NUMB_OF_LED_MATRICES;i++){display[i] = 0x00;} //Sets *display to 0
-    
+
     int start_letter_on_matrix;         // Where does the text start on the display
     int end_letter_on_matrix;           // Where does the text end on the display
     int missed_text_cols = 0;           // The number of columns from the text that was missed (to fill the display when scrolling)
     int text_cols_to_send;              // The number of columns from the text that still needs to be sent
-    
+
     int i=-1;
-    
+
     while(1){
         i++;
         if(start_from+i < 0){
@@ -309,16 +333,16 @@ void simpleMatrix::print(const char *text, int start_from, int del, bool left_to
             start_letter_on_matrix = i+start_from;
             missed_text_cols = i;
         }
-        
+
         if(start_from+i >= 8*_NUMB_OF_LED_MATRICES || i >= text_arr_lenght){
             end_letter_on_matrix = i+start_from-1;
             text_cols_to_send = i-1;
             break;
         }
-        
+
         if((i%FONT_CHAR_LENGHT)>=5 && !_IS_DISPLAY_VERTICAL){ //If the remainder of i%FONT_CHAR_LENGHT is more then 5(font size), send 0's
             display[i+start_from] = 0x00;
-        } 
+        }
         else{ //Send out the font
             if(is_text_progmem){
                 if(_IS_DISPLAY_VERTICAL){
@@ -337,13 +361,13 @@ void simpleMatrix::print(const char *text, int start_from, int del, bool left_to
                     for(int kk=0;kk<5;kk++){
                         display[i+start_from] |= (((font[ text[i/8]-0x20][ kk ]) >> ((i+start_from) % 8) ) & 0b1) << kk;
                     }
-                } 
+                }
                 else {
                     display[i+start_from] = (font[ text[i/FONT_CHAR_LENGHT]-0x20][ i%FONT_CHAR_LENGHT ]);
                 }
             }
         }
-        
+
     }
     sendMatrixBuffer(display); //Send out the display
     // If the option for scrolling is there, do so depending if it's left to right or right to left
@@ -374,7 +398,7 @@ void simpleMatrix::sendColumnBuffer(uint8_t *mat, int column, int start_from, bo
 
     int column_send = 0;
     for(int i=start_from;i<=(_NUMB_OF_LED_MATRICES*8)+1;i++){
-        display[i] = mat[i-start_from]; 
+        display[i] = mat[i-start_from];
         column_send++;
         if(column_send == column){break;}
     }
@@ -426,11 +450,11 @@ void simpleMatrix::scroll_text_left_to_right(const char  *text, int del, bool is
             display[start_letter_on_matrix] = 0x00; //Sends 0's if we already send out all of letters
             start_letter_on_matrix++;
         }
-        
+
         if(start_letter_on_matrix > (_NUMB_OF_LED_MATRICES*8)){
             break;
         }
-        
+
         sendMatrixBuffer(display); //Send out the display
         delay(del);
     }
@@ -459,11 +483,11 @@ void simpleMatrix::scroll_text_right_to_left(const char  *text, int del, bool is
             display[end_letter_on_matrix] = 0x00; //Sends 0's if we already send out all of letters
             end_letter_on_matrix--;
         }
-        
+
         if(end_letter_on_matrix < 0){
             break;
         }
-            
+
         sendMatrixBuffer(display); //Send out the display
         delay(del);
     }

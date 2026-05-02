@@ -30,9 +30,9 @@ function_name = sys.argv[1]
 
 @ctypes.CFUNCTYPE(ctypes.c_void_p, ctypes.POINTER(ctypes.c_char), ctypes.c_int)
 def got_display(a, delay):
-    # Everytime this function is called, the LED matrix is beign updated.
+    # Everytime this function is called, the LED matrix is being updated.
     # Use this to create an image of the LED matrix
-    
+
     global f_name
     document = ElementTree.parse('led_matrix.svg')
     root = document.getroot()
@@ -40,7 +40,7 @@ def got_display(a, delay):
     body = root.find(".//*[@id='body1']")
     # Make a copy of the first LED in case the frame sets the first LED to filled
     led_base = deepcopy(led_bodies[0])
-    
+
     for d in range(4):
         if d != 0:
             el = deepcopy(body)
@@ -62,7 +62,7 @@ def got_display(a, delay):
 
                 if not(r==0 and c==0 and d==0):
                     led_bodies.append(el)
-    
+
     # Add the LEDs after all is done so they appear on top
     for l in led_bodies:
         root.append(l)

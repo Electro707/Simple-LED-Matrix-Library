@@ -6,12 +6,12 @@
  *
  * \todo Create more examples.
  * \todo Add full support for the MAX7221 chipset.
- * 
- * \section Installation Installation 
- * To install the library, the prefered method is by using the Arduino's Library Manager. Simply looking for <em>simple led matrix</em> 
+ *
+ * \section Installation Installation
+ * To install the library, the prefered method is by using the Arduino's Library Manager. Simply looking for <em>simple led matrix</em>
  * should bring up this library. THe other way to install this library is to install it as a ZIP library downloaded from the Github repository.
- * 
- * \section Wiring Wiring 
+ *
+ * \section Wiring Wiring
  * On the hardware side, wire the Arduino to the LED matrix in the following fashion
  * <table>
  * <caption>Wiring Table</caption>
@@ -22,7 +22,7 @@
     <tr><td>D13 (Fixed)<td>CLK
     <tr><td>D4 (Adjustable by software)<td>CS
     </table>
- * 
+ *
  * \section GitHub GitHub Repo
  * <a href="https://github.com/Electro707/Simple-LED-Matrix-Library">Link to the library's Github repository</a>
  *
@@ -58,24 +58,24 @@ class simpleMatrix{
          * \brief Begins the library and initializes the display.
          */
         void begin();
-        
+
         /**
          * \brief Function to invert each individual display 180 degrees.
-         * 
+         *
          * The motive behind this is that some LED matrices have their LED matrix wired 180 degrees from other
-         * (we are talking about hung-low modules, so consistency isn't necessarily something I would nessesary expect),
+         * (we are talking about hung-low modules, so consistency isn't necessarily something I would necessary expect),
          * so this function is the fix for that.
-         * 
+         *
          * \param rotate Whether to rotate the displays or not. By default set to true/
          */
         void invertIndividualDisplays(bool rotate = true);
-        
+
         /**
          * \brief Function to set the display in vertical mode
-         * 
+         *
          * This will mainly effect where (0,0) starts, as this command will adjust that to (0,0) of a vertical display (so
          * upper left corner if the displays are layed out horizontally)
-         * 
+         *
          * \param is_vertical Whether the LED matrix is setup vertically. By default set to true.
          */
         void verticalDisplays(bool is_vertical = true);
@@ -93,7 +93,7 @@ class simpleMatrix{
          * By default, this function will fill the entire display (all matrices).
          * \param from Which LED matrix to start filling from.
          * \param to Which LED matrix to fill up to.
-         * 
+         *
          * \section Example
          * \code{.cpp}
          *   disp.fillDisplay();
@@ -105,14 +105,14 @@ class simpleMatrix{
          * \image html fillDisplay2.gif "fillDisplay2" width=12%
          */
         void fillDisplay(int from=0, int to=0x8000);
-        
+
         /**
          * \brief Scrolls a text left or right
          * \param del The delay between each frame while scrolling.
          * \param *text Any word/sentence you want.
          * \param left_to_right Whether the text will be scrolled left to right or right to left. \n
          *                      false for right to left, true for left to right
-         * \param start_from Which column the text will start scrolling from. 
+         * \param start_from Which column the text will start scrolling from.
          *                   Defaults to have the display be empty then having the text apear for both directions
          *
          * \section Example
@@ -154,7 +154,7 @@ class simpleMatrix{
          * \param start_from Which column the text will start scrolling from.
          */
         void scrollTextPROGMEM(const char *text, int del, bool left_to_right=false, int start_from=0x8000);
-        
+
         /**
          * \brief Same as scrollTextLeftToRight(), but the text is stored in FLASH memory instead of RAM (with PROGMEM)
          * \param *text A constant char array consisting of the word/sentence to be sent out. \n
@@ -172,7 +172,7 @@ class simpleMatrix{
          * \param start_from Where will the test start from. Defaults to having the end of the text at the begining of the matrix.
          */
         void scrollTextPROGMEMRightToLeft(const char *text, int del, int start_from=0x8000);
-        
+
         /**
          * \brief Sends some text to the display, with the option to have it scroll.
          * \param *text The string that you want to send (must be a char array).
@@ -198,13 +198,13 @@ class simpleMatrix{
          * \image html print3.gif "print3" width=12%
          */
         void print(const char *text, int start_from=0, int del=0, bool left_to_right=false, bool is_text_progmem=false);
-        
+
         /**
          * \brief Set the intensity of the LED matrix.
          * \param intensity The intensity of the display from 0-15.
          */
         void setIntensity(int intensity);
-        
+
         /**
          * \brief Sets a single pixel in the LED matrices.
          * \param x,y The coordinates of the pixel to be set.
@@ -227,7 +227,6 @@ class simpleMatrix{
          * \image html setPixel2.gif "setPixel2" width=12%
          */
         void setPixel(int x, int y);
-        
         /**
          * \brief Clears a single pixel in the LED matrices.
          * \param x,y The coordinates of the pixel to be cleared.
@@ -252,13 +251,13 @@ class simpleMatrix{
          * \image html clearPixel2.gif "clearPixel2" width=12%
          */
         void clearPixel(int x, int y);
-        
+
         /**
          * \brief Sets a row of pixels
          * \param x0 The start x position for the pixels to be set
          * \param x1 The end x position for the pixels to be set
          * \param y The y position of the pixels to be set
-         * 
+         *
          * \section Example
          * \code{.cpp}
          *   disp.setColumnPixels(0, 0, 2);
@@ -269,7 +268,8 @@ class simpleMatrix{
          * \image html setRowPixels1.gif "setRowPixels1" width=12%
          */
         void setRowPixels(int x0, int x1, int y);
-        
+
+
         /**
          * \brief Clears a row of pixels
          * \param x0 The start x position for the pixels to be cleared
@@ -277,13 +277,13 @@ class simpleMatrix{
          * \param y The y position of the pixels to be cleared
          */
         void clearRowPixels(int x0, int x1, int y);
-        
+
         /**
          * \brief Set a column of pixels
          * \param x The x position of the pixels to be set
          * \param y0 The start y position for the pixels to be set
          * \param y1 The end y position for the pixels to be set
-         * 
+         *
          * \section Example
          * \code{.cpp}
          *   disp.setColumnPixels(0, 0, 2);
@@ -294,7 +294,7 @@ class simpleMatrix{
          * \image html setColumnPixels1.gif "setColumnPixels1" width=12%
          */
         void setColumnPixels(int x, int y0, int y1);
-        
+
         /**
          * \brief Clears a column of pixels
          * \param x The x position of the pixels to be cleared
@@ -302,7 +302,7 @@ class simpleMatrix{
          * \param y1 The end y position for the pixels to be cleared
          */
         void clearColumnPixels(int x, int y0, int y1);
-        
+
         /**
          * \brief A wrapper function for the sendColumnBuffer() function.
          *        Scrolls a custom bitmap to the matrices, with a height of 8 pixels and any number of column
@@ -323,15 +323,90 @@ class simpleMatrix{
          * \param del The delay between each frame if scroll is set to true.
          */
         void sendColumnBuffer(uint8_t *mat, int column, int start_from=0, bool scroll=false, int del=0);
-        
+
         /**
-         * \brief Sends a custom 32x8 bitmap to the matrices. 
-         * \warning This function should not be directly used.
-         * \param *mat A column-addressed array that contains the bytes (*mat must be an array of uint8_t type) of size that is equal to the number of columns in your buffer (For a 4 matrix display, there will be 32 columns)
-         * \param start_from The offset in the *mat where the function will start accessing.
+         * \brief Buffered counterpart to \ref setPixel
+         * \note This function doesn't draw to the screen on it's own. Call \ref sendMatrixBuffer to draw
+         * \param x,y The coordinates of the pixel to be set.
+         *
+         * \section Example
+         * \code{.cpp}
+         *   disp.setPixelBuff(0, 0);
+         *   disp.setPixelBuff(7, 7);
+         *   disp.sendMatrixBuffer();
+         *   disp.setPixelBuff(12, 5);
+         *   disp.setPixelBuff(20, 3);
+         *   disp.sendMatrixBuffer();
+         * \endcode
+         * \image html setPixelBuff1.gif "setPixelBuff1" width=12%
+         */
+        void setPixelBuff(int x, int y);
+
+        /**
+         * \brief Buffered counterpart to \ref clearPixel
+         * \note This function doesn't draw to the screen on it's own. Call \ref sendMatrixBuffer to draw
+         * \param x,y The coordinates of the pixel to be cleared.
+         *
+         * \section Example
+         * \code{.cpp}
+         *   disp.fillDisplay();
+         *   disp.clearPixelBuff(0, 0);
+         *   disp.clearPixelBuff(7, 7);
+         *   disp.sendMatrixBuffer();
+         *   disp.clearPixelBuff(12, 5);
+         *   disp.clearPixelBuff(20, 3);
+         *   disp.sendMatrixBuffer();
+         * \endcode
+         * \image html clearPixelBuff1.gif "clearPixelBuff1" width=12%
+         */
+        void clearPixelBuff(int x, int y);
+
+        /**
+         * \brief Buffered counterpart to \ref setRowPixels
+         * \note This function doesn't draw to the screen on it's own. Call \ref sendMatrixBuffer to draw
+         * \param x0 The start x position for the pixels to be set
+         * \param x1 The end x position for the pixels to be set
+         * \param y The y position of the pixels to be set
+         */
+        void setRowPixelsBuff(int x0, int x1, int y);
+
+        /**
+         * \brief Buffered counterpart to \ref clearRowPixels
+         * \note This function doesn't draw to the screen on it's own. Call \ref sendMatrixBuffer to draw
+         * \param x0 The start x position for the pixels to be cleared
+         * \param x1 The end x position for the pixels to be cleared
+         * \param y The y position of the pixels to be cleared
+         */
+        void clearRowPixelsBuff(int x0, int x1, int y);
+
+        /**
+         * \brief Set a column of pixels
+         * \note This function doesn't draw to the screen on it's own. Call \ref sendMatrixBuffer to draw
+         * \param x The x position of the pixels to be set
+         * \param y0 The start y position for the pixels to be set
+         * \param y1 The end y position for the pixels to be set
+         */
+        void setColumnPixelsBuff(int x, int y0, int y1);
+
+        /**
+         * \brief Clears a column of pixels
+         * \note This function doesn't draw to the screen on it's own. Call \ref sendMatrixBuffer to draw
+         * \param x The x position of the pixels to be cleared
+         * \param y0 The start y position for the pixels to be cleared
+         * \param y1 The end y position for the pixels to be cleared
+         */
+        void clearColumnPixelsBuff(int x, int y0, int y1);
+
+        /**
+         * \brief Sends a custom 32x8 bitmap to the matrices.
+         * \details Can be used to refresh the display if the internal buffer change without coming it to the display
+         * \param *mat A column-addressed array that contains the bytes (*mat must be an array of uint8_t type) of size that is equal
+         *             to the number of columns in your buffer (For a 4 matrix display, there will be 32 columns). \n
+         *             If not given, it uses the internal library's buffer. Otherwise it copies the given buffer to the internal library's buffer
+         * \param start_from The offset in the *mat where the function will start accessing. \n Defaults to 0
          */
         void sendMatrixBuffer(uint8_t *mat=NULL, int start_from=0);
-        
+
 #ifdef TEST_EXTERNAL
         uint8_t *return_external_matrix(void);
 #endif
@@ -343,9 +418,9 @@ class simpleMatrix{
         unsigned int _DL_PIN;               // The CS pin of the LED matrix
         int _NUMB_OF_LED_MATRICES;          // The number of LED matrix modules
         bool _IS_DISPLAY_VERTICAL;          // Whether the display is vertical or not
-        
+
         //Sends the _matrix buffer to the displays
-        void senddisplay(); 
+        void senddisplay();
         // Internal function to send a command and data to all matrices.
         void sendCommandtoAll(uint8_t command, uint8_t data);
         // Internal function to send a command and data to a specific display number.

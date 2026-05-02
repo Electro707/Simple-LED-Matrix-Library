@@ -1,7 +1,7 @@
 extra/doxygen_out
 examples/*/build
 
-# Arduino's .developmement file
+# Arduino's .development file
 .development
 
 # Things related to building the GIF images with the library in extra/build_gif
@@ -10,3 +10,6 @@ examples/*/build
 
 # Backup stuff
 *.bak
+
+# VSCode
+.vscode/
